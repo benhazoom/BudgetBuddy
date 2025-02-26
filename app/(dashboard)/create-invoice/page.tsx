@@ -11,7 +11,21 @@ export default function CreateInvoice() {
 
     const { user } = useUser(); // Get Clerk user info
 
-    const categories = ["Income", "Food", "Clothing", "Bills"];
+    const [categories, setCategories] = useState<string[]>([]);
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            const response = await fetch("/api/budget");
+            if (response.ok) {
+                const data = await response.json();
+                setCategories(data.map((budget: { category: string }) => budget.category));
+            } else {
+                alert("Failed to fetch categories");
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
