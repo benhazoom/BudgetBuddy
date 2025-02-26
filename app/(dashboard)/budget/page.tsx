@@ -66,7 +66,7 @@ export default function BudgetPage() {
     useEffect(() => {
         const sums: Record<string, number> = {};
         invoices.forEach((invoice) => {
-            sums[invoice.category] = (sums[invoice.category] || 0) + invoice.amount;
+            sums[invoice.category] = (sums[invoice.category] || 0) + Number(invoice.amount);
         });
         setCategorySums(sums);
     }, [invoices]);
@@ -131,6 +131,30 @@ export default function BudgetPage() {
         }
     };
 
+    // Function to delete category
+    const handleDelete = async (category: string) => {
+        try {
+            const res = await fetch(`/api/budget`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ category }),
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to delete invoice");
+            }
+            alert("Category deleted successfully.");
+            // Update the state to remove the deleted category
+            setCategories((prev) => prev.filter((cat) => cat !== category));
+            setBudgets((prev) => prev.filter((budget) => budget.category !== category));
+        } catch (error) {
+            console.error("Error deleting category:", error);
+            alert("Error deleting category.");
+        }
+    };
+
     return (
         <Box sx={{ padding: 3 }}>
             <Typography variant="h4" gutterBottom>Set Your Budgets</Typography>
@@ -164,6 +188,15 @@ export default function BudgetPage() {
                                     ).toFixed(2)
                                     : "N/A"}
                             </Typography>
+                            {/* Delete Button */}
+                            <Button
+                                variant="contained"
+                                color="error"
+                                onClick={() => handleDelete(category)}
+                                sx={{ marginRight: 1 }}
+                            >
+                                Delete
+                            </Button>
                         </Box>
                     ))}
 
@@ -196,15 +229,15 @@ export default function BudgetPage() {
                             </Button>
                         </DialogActions>
                     </Dialog>
+                    <Button variant="contained" color="secondary" sx={{ marginTop: 3, marginRight: 1 }} onClick={() => setAddingCategory(true)}>
+                        Add Category
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={saveBudgets} disabled={saving} sx={{ marginTop: 3 }}>
+                        {saving ? "Saving..." : "Save Budgets"}
+                    </Button>
                 </>
             )}
-
-            <Button variant="contained" color="secondary" sx={{ marginTop: 3 }} onClick={() => setAddingCategory(true)}>
-                Add Category
-            </Button>
-            <Button variant="contained" color="primary" onClick={saveBudgets} disabled={saving} sx={{ marginTop: 3 }}>
-                {saving ? "Saving..." : "Save Budgets"}
-            </Button>
         </Box>
+
     );
 }

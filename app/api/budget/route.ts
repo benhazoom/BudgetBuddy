@@ -34,3 +34,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Failed to save budgets" }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const { userId } = await auth();
+    const { category } = await req.json();
+
+    const db = await connectDB();
+    await db.collection("budgets").deleteOne({ userId, category });
+
+    return NextResponse.json({ message: "Budget deleted successfully" });
+  } catch (error) {
+    return NextResponse.json({ message: "Failed to delete budget" }, { status: 500 });
+  }
+}

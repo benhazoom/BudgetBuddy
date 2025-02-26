@@ -1,3 +1,5 @@
 When editing invoice - amount when you delete and type it leads with a zero
 Centrelize fetches into state to be showen faster across the application
 implement redux and rtk quary
+
+loader when adding category
