@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Typography, CircularProgress } from "@mui/material";
+import { Typography, CircularProgress, LinearProgress } from "@mui/material";
 import Link from "next/link";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { SignedIn } from "@clerk/nextjs";
@@ -61,45 +62,53 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
-      <SignedIn>
-
+    <SignedIn>
+      <Box sx={{ padding: "20px" }}>
 
         {loading ? (
-          <Typography variant="h6" component="div">
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
             <CircularProgress />
-          </Typography>
+          </Box>
         ) : (
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, marginTop: "20px" }}>
+          <Grid container spacing={3}>
             {budgets.map((budget, index) => {
               const sum = categorySums[budget.category] || 0;
               const ratio = budget.amount ? (sum / budget.amount).toFixed(2) : "N/A";
+              const progress = budget.amount ? (sum / budget.amount) * 100 : 0;
 
               return (
-                <Box key={index} sx={{ flex: "1 1 calc(25% - 16px)", boxSizing: "border-box" }}>
-                  <Card>
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                  <Card sx={{ p: 2, boxShadow: 3, borderRadius: 2 }}>
                     <CardContent>
-                      <Typography variant="h5" component="div">
+                      <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
                         {budget.category}
                       </Typography>
                       <Typography variant="body2">
-                        Total Spent: ${sum} / Budget: ${budget.amount}
+                        Total Spent: <b>${sum}</b> / <b>${budget.amount}</b>
                       </Typography>
-                      <Typography variant="body2">Ratio: {ratio}</Typography>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        Ratio: {ratio}
+                      </Typography>
+                      <LinearProgress
+                        variant="determinate"
+                        value={progress}
+                        sx={{ height: 8, borderRadius: 5 }}
+                        color={progress > 80 ? "error" : progress > 50 ? "warning" : "primary"}
+                      />
                     </CardContent>
                   </Card>
-                </Box>
+                </Grid>
               );
             })}
-            <Button variant="contained" color="primary" component={Link} href="/create-invoice">
-              Add Invoice
-            </Button>
-          </Box >
-        )
-        }
+            <Box sx={{ textAlign: "center", mt: 4 }}>
+              <Button variant="contained" color="primary" component={Link} href="/create-invoice" sx={{ px: 3, py: 1 }}>
+                Add Invoice
+              </Button>
+            </Box>
+          </Grid>
+        )}
 
-
-      </SignedIn >
-    </>
+      </Box>
+    </SignedIn>
   );
 }
