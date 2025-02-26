@@ -180,8 +180,8 @@ export default function InvoicesPage() {
             label="Amount"
             fullWidth
             type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            value={amount === 0 ? "" : amount}
+            onChange={(e) => setAmount(parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0)}
             sx={{ marginBottom: 2 }}
           />
         </DialogContent>

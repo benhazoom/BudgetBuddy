@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CircularProgress, Box, Typography, TextField, Button } from "@mui/material";
-import { useRouter } from "next/navigation"; // Import the useRouter hook
+import { CircularProgress, Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 interface Invoice {
     _id: string;
@@ -19,17 +19,21 @@ interface Budget {
 export default function BudgetPage() {
     const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [budgets, setBudgets] = useState<Budget[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [categories, setCategories] = useState<string[]>(['Food', 'Clothing', 'Bills']);
     const [categorySums, setCategorySums] = useState<Record<string, number>>({});
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const router = useRouter(); // Initialize the router
+    const [newCategory, setNewCategory] = useState("");
+    const router = useRouter();
+    //adding new budgeting category
+    const [addingCategory, setAddingCategory] = useState<Boolean | null>(null);
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [budget, setBudget] = useState(0);
 
-    // Categories we're working with (removed "Income")
-    const categories = ['Food', 'Clothing', 'Bills'];
-
-    // Fetch invoices
+    // Fetch invoices and budgets
     useEffect(() => {
-        async function fetchInvoicesAndBudgets() {
+        async function fetchData() {
             try {
                 const [invoicesRes, budgetsRes] = await Promise.all([
                     fetch("/api/invoices"),
@@ -44,18 +48,21 @@ export default function BudgetPage() {
 
                 setInvoices(invoicesData);
                 setBudgets(budgetsData);
+
+                // Add any categories from budgets that are missing in state
+                const fetchedCategories = budgetsData.map((b: Budget) => b.category);
+                setCategories((prev) => [...new Set([...prev, ...fetchedCategories])]);
             } catch (error) {
-                console.error("Error fetching invoices and budgets:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         }
 
-        fetchInvoicesAndBudgets();
-
+        fetchData();
     }, []);
 
-    // Sum up the invoices by category
+    // Calculate total spent per category
     useEffect(() => {
         const sums: Record<string, number> = {};
         invoices.forEach((invoice) => {
@@ -77,26 +84,20 @@ export default function BudgetPage() {
         });
     };
 
-    // Save budgets to the database and redirect to the dashboard
+    // Save budgets to the database
     const saveBudgets = async () => {
         setSaving(true);
         try {
             const res = await fetch("/api/budget", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(budgets),
             });
 
-            if (!res.ok) {
-                throw new Error("Failed to save budgets");
-            }
+            if (!res.ok) throw new Error("Failed to save budgets");
             alert("Budgets saved successfully");
 
-            // Redirect to the dashboard after saving
-            router.push("/"); // Redirect to the dashboard
-
+            router.push("/");
         } catch (error) {
             console.error("Error saving budgets:", error);
             alert("Error saving budgets");
@@ -105,49 +106,103 @@ export default function BudgetPage() {
         }
     };
 
+    // Function to submit the added category
+    const addCategory = async () => {
+        if (!name.trim()) return alert("Category name cannot be empty");
+        if (categories.includes(name)) return alert("Category already exists");
+
+        try {
+            const res = await fetch("/api/category", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ category: name, amount: budget }),
+            });
+
+            if (!res.ok) throw new Error("Failed to add category");
+
+            // Update the UI
+            setCategories((prev) => [...prev, name]);
+            setBudgets((prev) => [...prev, { category: name, amount: budget }]);
+            alert("Category added successfully!");
+            setAddingCategory(null);
+        } catch (error) {
+            console.error("Error adding category:", error);
+            alert("Error adding category");
+        }
+    };
+
     return (
         <Box sx={{ padding: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                Set Your Budgets
-            </Typography>
+            <Typography variant="h4" gutterBottom>Set Your Budgets</Typography>
 
             {loading ? (
                 <CircularProgress />
             ) : (
-                categories.map((category) => (
-                    <Box key={category} sx={{ marginBottom: 3 }}>
-                        <Typography variant="h6">{category}</Typography>
-                        <TextField
-                            label="Budget"
-                            type="number"
-                            value={budgets.find((b) => b.category === category)?.amount || ""}
-                            onChange={(e) =>
-                                handleBudgetChange(category, parseFloat(e.target.value) || 0)
-                            }
-                            fullWidth
-                        />
-                        <Typography>
-                            Sum: {categorySums[category] || 0} / Budget: {budgets.find((b) => b.category === category)?.amount || 0}
-                        </Typography>
-                        <Typography>
-                            Ratio:{" "}
-                            {budgets.find((b) => b.category === category)?.amount
-                                ? (
-                                    (categorySums[category] || 0) /
-                                    (budgets.find((b) => b.category === category)?.amount || 1)
-                                ).toFixed(2)
-                                : "N/A"}
-                        </Typography>
-                    </Box>
-                ))
+                <>
+                    {categories.map((category) => (
+                        <Box key={category} sx={{ marginBottom: 3 }}>
+
+                            {/* with the regex we make sure that non numbers are not allowed!
+                            mind that type="number" can cause problems like accidental value changes and its ugly anyways" */}
+                            <Typography variant="h6">{category}</Typography>
+                            <TextField
+                                label="Budget"
+                                type="text"
+                                value={budgets.find((b) => b.category === category)?.amount || ""}
+                                onChange={(e) => handleBudgetChange(category, parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0)}
+                                fullWidth
+                            />
+                            <Typography>
+                                Sum: {categorySums[category] || 0} / Budget: {budgets.find((b) => b.category === category)?.amount || 0}
+                            </Typography>
+                            <Typography>
+                                Ratio:{" "}
+                                {budgets.find((b) => b.category === category)?.amount
+                                    ? (
+                                        (categorySums[category] || 0) /
+                                        (budgets.find((b) => b.category === category)?.amount || 1)
+                                    ).toFixed(2)
+                                    : "N/A"}
+                            </Typography>
+                        </Box>
+                    ))}
+
+                    {/* New Category Input */}
+                    <Dialog open={Boolean(addingCategory)} onClose={() => setAddingCategory(null)}>
+                        <DialogTitle>Add Category</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                label="Category Name"
+                                fullWidth
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                                label="Budget"
+                                fullWidth
+                                type="text"
+                                value={budget === 0 ? "" : budget}
+                                onChange={(e) => setBudget(parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0)}
+                                sx={{ marginBottom: 2 }}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setAddingCategory(null)} color="secondary">
+                                Cancel
+                            </Button>
+                            <Button onClick={addCategory} color="primary">
+                                Add
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </>
             )}
 
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={saveBudgets}
-                disabled={saving}
-            >
+            <Button variant="contained" color="secondary" sx={{ marginTop: 3 }} onClick={() => setAddingCategory(true)}>
+                Add Category
+            </Button>
+            <Button variant="contained" color="primary" onClick={saveBudgets} disabled={saving} sx={{ marginTop: 3 }}>
                 {saving ? "Saving..." : "Save Budgets"}
             </Button>
         </Box>
