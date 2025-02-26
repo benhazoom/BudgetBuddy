@@ -40,6 +40,8 @@ const NAVIGATION: Navigation = [
 
 const BRANDING = {
   title: 'Budget Buddy',
+  logo: <img src="/budgetbuddy_logo.png" alt="BudgetBuddy logo" />,
+
 };
 
 

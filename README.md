@@ -25,3 +25,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ### Front - React,Next,MUI Toolpad
 
 ### Back - Nest.js
+
+# Run instruction
+
+1. Clone/Fork the Repository
+2. Open in Vsc or other IDE
+3. In Terminal (BudgetBuddy directory) type npm i
+4. rename .env.local.example to .env.local and set the values
