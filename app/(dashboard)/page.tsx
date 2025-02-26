@@ -47,7 +47,7 @@ export default function HomePage() {
         // Calculate total sum per category
         const sums: Record<string, number> = {};
         invoicesData.forEach((invoice: Invoice) => {
-          sums[invoice.category] = (sums[invoice.category] || 0) + invoice.amount;
+          sums[invoice.category] = (sums[invoice.category] || 0) + Number(invoice.amount);
         });
         setCategorySums(sums);
       } catch (error) {

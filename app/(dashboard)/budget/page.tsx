@@ -26,7 +26,8 @@ export default function BudgetPage() {
     const [newCategory, setNewCategory] = useState("");
     const router = useRouter();
     //adding new budgeting category
-    const [addingCategory, setAddingCategory] = useState<Boolean | null>(null);
+    const [addingCategory, setAddingCategory] = useState<boolean>(false);
+    const [postingCategoryTodb, setPostingCategoryTodb] = useState<boolean>(false);
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [budget, setBudget] = useState(0);
@@ -108,6 +109,7 @@ export default function BudgetPage() {
 
     // Function to submit the added category
     const addCategory = async () => {
+        setPostingCategoryTodb(true);
         if (!name.trim()) return alert("Category name cannot be empty");
         if (categories.includes(name)) return alert("Category already exists");
 
@@ -124,10 +126,13 @@ export default function BudgetPage() {
             setCategories((prev) => [...prev, name]);
             setBudgets((prev) => [...prev, { category: name, amount: budget }]);
             alert("Category added successfully!");
-            setAddingCategory(null);
+            setAddingCategory(false);
         } catch (error) {
             console.error("Error adding category:", error);
             alert("Error adding category");
+        }
+        finally {
+            setSaving(false);
         }
     };
 
@@ -201,7 +206,7 @@ export default function BudgetPage() {
                     ))}
 
                     {/* New Category Input */}
-                    <Dialog open={Boolean(addingCategory)} onClose={() => setAddingCategory(null)}>
+                    <Dialog open={Boolean(addingCategory)} onClose={() => setAddingCategory(false)}>
                         <DialogTitle>Add Category</DialogTitle>
                         <DialogContent>
                             <TextField
@@ -221,15 +226,15 @@ export default function BudgetPage() {
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setAddingCategory(null)} color="secondary">
+                            <Button onClick={() => setAddingCategory(false)} color="secondary">
                                 Cancel
                             </Button>
-                            <Button onClick={addCategory} color="primary">
-                                Add
+                            <Button onClick={addCategory} color="primary" disabled={postingCategoryTodb}>
+                                {postingCategoryTodb ? <CircularProgress size={24} /> : "Add"}
                             </Button>
                         </DialogActions>
                     </Dialog>
-                    <Button variant="contained" color="secondary" sx={{ marginTop: 3, marginRight: 1 }} onClick={() => setAddingCategory(true)}>
+                    <Button variant="contained" color="secondary" sx={{ marginTop: 3, marginRight: 1 }} onClick={() => setAddingCategory(true)} disabled={addingCategory}>
                         Add Category
                     </Button>
                     <Button variant="contained" color="primary" onClick={saveBudgets} disabled={saving} sx={{ marginTop: 3 }}>
