@@ -3,3 +3,6 @@ Centrelize fetches into state to be showen faster across the application
 implement redux and rtk quary
 
 loader when adding category
+
+invoices
+1.Sort invoices by category
