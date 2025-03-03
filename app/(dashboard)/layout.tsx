@@ -9,9 +9,9 @@ function CustomUserButton() {
   return (
 
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <UserButton showName />
+      <UserButton />
     </div>
-  );
+  )
 }
 
 export default function Layout(props: { children: React.ReactNode }) {

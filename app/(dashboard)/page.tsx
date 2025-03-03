@@ -100,13 +100,13 @@ export default function HomePage() {
                 </Grid>
               );
             })}
-            <Box sx={{ textAlign: "center", mt: 4 }}>
-              <Button variant="contained" color="primary" component={Link} href="/create-invoice" sx={{ px: 3, py: 1 }}>
-                Add Invoice
-              </Button>
-            </Box>
           </Grid>
         )}
+        <Box sx={{ textAlign: "center", mt: 4 }}>
+          <Button variant="contained" color="primary" component={Link} href="/create-invoice" sx={{ px: 3, py: 1 }}>
+            Create Invoice
+          </Button>
+        </Box>
 
       </Box>
     </SignedIn>
