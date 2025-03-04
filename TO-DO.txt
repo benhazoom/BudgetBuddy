@@ -4,5 +4,6 @@ implement redux and rtk quary
 
 loader when adding category
 
-invoices
-1.Sort invoices by category
+invoices 
+ //TODO 1.Sort invoices by category
+ //TODO 2.provide default categories

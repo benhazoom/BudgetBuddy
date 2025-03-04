@@ -51,6 +51,26 @@ export default function HomePage() {
           sums[invoice.category] = (sums[invoice.category] || 0) + Number(invoice.amount);
         });
         setCategorySums(sums);
+
+        // Check if there are no budgets and notify the user
+        if (budgetsData.length === 0) {
+          window.alert(
+            "It appears you don't have budgeting categories yet. Default budgeting categories will be added. You can add and edit categories manually in the budget section."
+          );
+          await fetch("/api/budget", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify([
+              { category: "Food", amount: 500 },
+              { category: "Clothing", amount: 500 },
+              { category: "Bills", amount: 500 },
+            ]),
+          }).then(() => {
+            window.location.reload(); // Reload the page to fetch the new budgets
+          });
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
