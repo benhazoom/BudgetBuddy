@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { SignedIn } from "@clerk/nextjs";
+import { toast } from "react-toastify";
 
 interface Invoice {
   _id: string;
@@ -54,7 +55,7 @@ export default function HomePage() {
 
         // Check if there are no budgets and notify the user
         if (budgetsData.length === 0) {
-          window.alert(
+          toast.info(
             "It appears you don't have budgeting categories yet. Default budgeting categories will be added. You can add and edit categories manually in the budget section."
           );
           await fetch("/api/budget", {

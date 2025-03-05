@@ -10,6 +10,8 @@ import theme from '../theme';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import AddIcon from '@mui/icons-material/Add';
 import { ClerkProvider, SignedOut, SignedIn, SignIn } from '@clerk/nextjs';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NAVIGATION: Navigation = [
   {
@@ -58,7 +60,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <React.Suspense fallback={<LinearProgress />}>
 
               <SignedIn>
-
+                <ToastContainer />
                 <NextAppProvider
                   navigation={NAVIGATION}
                   branding={BRANDING}
@@ -66,7 +68,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 >
                   {props.children}
                 </NextAppProvider>
-
               </SignedIn>
 
 

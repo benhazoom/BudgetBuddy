@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { CircularProgress, Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
 interface Invoice {
     _id: string;
     name: string;
@@ -96,12 +96,12 @@ export default function BudgetPage() {
             });
 
             if (!res.ok) throw new Error("Failed to save budgets");
-            alert("Budgets saved successfully");
+            toast.success("Budgets saved successfully");
 
             router.push("/");
         } catch (error) {
             console.error("Error saving budgets:", error);
-            alert("Error saving budgets");
+            toast.error("Error saving budgets");
         } finally {
             setSaving(false);
         }
@@ -110,8 +110,8 @@ export default function BudgetPage() {
     // Function to submit the added category
     const addCategory = async () => {
         setPostingCategoryTodb(true);
-        if (!name.trim()) return alert("Category name cannot be empty");
-        if (categories.includes(name)) return alert("Category already exists");
+        if (!name.trim()) return toast.error("Category name cannot be empty");
+        if (categories.includes(name)) return toast.error("Category already exists");
 
         try {
             const res = await fetch("/api/category", {
@@ -125,14 +125,16 @@ export default function BudgetPage() {
             // Update the UI
             setCategories((prev) => [...prev, name]);
             setBudgets((prev) => [...prev, { category: name, amount: budget }]);
-            alert("Category added successfully!");
+            toast.success("Category added successfully!");
             setAddingCategory(false);
         } catch (error) {
             console.error("Error adding category:", error);
-            alert("Error adding category");
+            toast.error("Error adding category");
         }
         finally {
             setSaving(false);
+            setPostingCategoryTodb(false);
+
         }
     };
 
@@ -150,13 +152,13 @@ export default function BudgetPage() {
             if (!res.ok) {
                 throw new Error("Failed to delete invoice");
             }
-            alert("Category deleted successfully.");
+            toast.success("Category deleted successfully.");
             // Update the state to remove the deleted category
             setCategories((prev) => prev.filter((cat) => cat !== category));
             setBudgets((prev) => prev.filter((budget) => budget.category !== category));
         } catch (error) {
             console.error("Error deleting category:", error);
-            alert("Error deleting category.");
+            toast.error("Error deleting category.");
         }
     };
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CircularProgress, Box, Typography, Button, TextField, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { toast } from "react-toastify";
 
 interface Invoice {
   _id: string;
@@ -39,10 +40,10 @@ export default function InvoicesPage() {
       setInvoices((prevInvoices) =>
         prevInvoices.filter((invoice) => invoice._id !== invoiceId)
       );
-      alert("Invoice deleted successfully.");
+      toast.success("Invoice deleted successfully.");
     } catch (error) {
       console.error("Error deleting invoice:", error);
-      alert("Error deleting invoice.");
+      toast.error("Error deleting invoice.");
     }
   };
 
@@ -84,11 +85,11 @@ export default function InvoicesPage() {
             : invoice
         )
       );
-      alert("Invoice updated successfully.");
+      toast.success("Invoice updated successfully.");
       setEditingInvoice(null); // Close the edit form
     } catch (error) {
       console.error("Error updating invoice:", error);
-      alert("Error updating invoice.");
+      toast.error("Error updating invoice.");
     }
   };
 

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { TextField, MenuItem, Button, Box } from "@mui/material";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "react-toastify";
 
 export default function CreateInvoice() {
     const [name, setName] = useState("");
@@ -20,7 +21,7 @@ export default function CreateInvoice() {
                 const data = await response.json();
                 setCategories(data.map((budget: { category: string }) => budget.category));
             } else {
-                alert("Failed to fetch categories");
+                toast.error("Failed to fetch categories");
             }
         };
 
@@ -31,7 +32,7 @@ export default function CreateInvoice() {
         event.preventDefault();
 
         if (!user) {
-            alert("You must be logged in to create an invoice");
+            toast.error("You must be logged in to create an invoice");
             return;
         }
 
@@ -42,13 +43,13 @@ export default function CreateInvoice() {
         });
 
         if (response.ok) {
-            alert("Invoice created successfully");
+            toast.success("Invoice created successfully");
             setName("");
             setCategory("");
             setAmount("");
         } else {
             const error = await response.json();
-            alert("Error: " + error.message);
+            toast.error("Error: " + error.message);
         }
     };
 
