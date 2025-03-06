@@ -53,7 +53,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="en" data-toolpad-color-scheme="light" suppressHydrationWarning>
-      <body>
+      <body style={{ margin: 0, padding: 0}}>
         <ClerkProvider>
 
           <AppRouterCacheProvider options={{ enableCssLayer: true }}>
@@ -72,8 +72,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 
 
               <SignedOut>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <div style={{backgroundImage: 'url("/hhholographic16X9.jpg")', backgroundSize: 'cover',backgroundPosition: 'center',height: '100vh'}}>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                   <SignIn routing='hash' />
+                  </div>
                 </div>
               </SignedOut>
             </React.Suspense>
