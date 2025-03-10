@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Typography, CircularProgress, LinearProgress } from "@mui/material";
+import ExpanseCard from "../components/ExpanseCard";
 import Link from "next/link";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -10,7 +11,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { SignedIn } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-
+import { PieChart } from '@mui/x-charts/PieChart';
 interface Invoice {
   _id: string;
   category: string;
@@ -81,9 +82,70 @@ export default function HomePage() {
 
     fetchData();
   }, []);
+  const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
+  const totalSpent = Object.values(categorySums).reduce((sum, val) => sum + val, 0);
+  const budgetUsedPercentage = totalBudget ? (totalSpent / totalBudget) * 100 : 0;
+
+  const chartData = budgets.map((budget) => ({
+    name: budget.category,
+    value: categorySums[budget.category] || 0,
+    color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+  }));
+
+  //An injective function (one-to-one function) ensures that different inputs always map to different colors
+  function stringToColor(str: string) {
+    let hash = 0;
+    // Create a hash from the string
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    // Convert hash to RGB color
+    let color = "#";
+    for (let i = 0; i < 3; i++) {
+        let value = (hash >> (i * 8)) & 0xFF;
+        color += ("00" + value.toString(16)).slice(-2);
+    }
+    return color;
+}
 
   return (
     <SignedIn>
+      
+      <Box p={3}>
+        <Card sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', boxShadow: 3 }}>
+          <Box sx={{ width: { xs: '100%', md: '50%' } }}>
+            <Typography variant="h6">Monthly Overview</Typography>
+            <Typography variant="h4" sx={{ mt: 2 }}>
+              ${totalSpent} <Typography component="span" color="textSecondary" variant="body2">of budget</Typography>
+            </Typography>
+            <Typography color="success.main">↓ ${totalBudget - totalSpent} Remaining</Typography>
+            <LinearProgress variant="determinate" value={budgetUsedPercentage} sx={{ mt: 2 }} />
+            <Typography variant="body2" color="textSecondary">{budgetUsedPercentage.toFixed(0)}% of monthly budget used</Typography>
+          </Box>
+          <Box sx={{ height: 300,width: 300 }}>
+            <PieChart
+              series={[
+                {
+                  data: chartData.map((entry) => ({ id: entry.name, value: entry.value, color: stringToColor(entry.name) })),
+                  innerRadius: 60,
+                  outerRadius: 100,
+                  paddingAngle: 0,
+                  cornerRadius: 0,
+                  startAngle: 0,
+                  endAngle: 360,
+                  cx: 150,
+                  cy: 150,
+                //   arcLabel: (item) => `${item.value}%`,
+                //   arcLabelMinAngle: 35,
+                //  arcLabelRadius: '60%',
+      
+                }
+              ]}
+            />
+          </Box>
+        </Card>
+      </Box>
+
       <Box sx={{ padding: "20px" }}>
 
         {loading ? (
@@ -99,25 +161,13 @@ export default function HomePage() {
 
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card sx={{ p: 2, boxShadow: 3, borderRadius: 2 }}>
-                    <CardContent>
-                      <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-                        {budget.category}
-                      </Typography>
-                      <Typography variant="body2">
-                        Total Spent: <b>${sum}</b> / <b>${budget.amount}</b>
-                      </Typography>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        Ratio: {ratio}
-                      </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={progress}
-                        sx={{ height: 8, borderRadius: 5 }}
-                        color={progress > 80 ? "error" : progress > 50 ? "warning" : "primary"}
-                      />
-                    </CardContent>
-                  </Card>
+                    <ExpanseCard
+                    category={budget.category}
+                    totalSpent={sum}
+                    budgetAmount={budget.amount}
+                    ratio={ratio}
+                    progress={progress}
+                    />
                 </Grid>
               );
             })}
@@ -133,3 +183,5 @@ export default function HomePage() {
     </SignedIn>
   );
 }
+
+
