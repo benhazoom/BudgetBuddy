@@ -1,8 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CircularProgress, Box, Typography, Button, TextField, MenuItem, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import {
+  CircularProgress,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Select,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import { toast } from "react-toastify";
+import InvoiceCard from "@/app/components/InvoiceCard";
 
 interface Invoice {
   _id: string;
@@ -18,8 +33,11 @@ export default function InvoicesPage() {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState(0);
+  const [filterCategory, setFilterCategory] = useState("");
 
-  const categories = ["Income", "Food", "Clothing", "Bills"];
+  const categories = Array.from(
+    new Set(invoices.map((invoice) => invoice.category))
+  );
 
   // Function to delete invoice
   const handleDelete = async (invoiceId: string) => {
@@ -110,50 +128,56 @@ export default function InvoicesPage() {
     fetchInvoices();
   }, []);
 
+  const filteredInvoices = filterCategory
+    ? invoices.filter((invoice) => invoice.category === filterCategory)
+    : invoices;
+
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
         Your Invoices
       </Typography>
 
+      <FormControl fullWidth sx={{ marginBottom: 2 }}>
+        <InputLabel>Filter by Category</InputLabel>
+        <Select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          label="Filter by Category"
+        >
+          <MenuItem value="">
+            <em>All</em>
+          </MenuItem>
+          {categories.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       {loading ? (
         <CircularProgress />
-      ) : invoices.length > 0 ? (
-        invoices.map((invoice) => (
-          <Box
+      ) : filteredInvoices.length > 0 ? (
+        filteredInvoices.map((invoice) => (
+          <InvoiceCard
             key={invoice._id}
-            sx={{ border: "1px solid #ddd", padding: 2, marginBottom: 2 }}
-          >
-            <Typography variant="h6">{invoice.name}</Typography>
-            <Typography>Category: {invoice.category}</Typography>
-            <Typography>Amount: ${invoice.amount}</Typography>
-
-            {/* Edit Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleEdit(invoice)}
-              sx={{ marginRight: 1 }}
-            >
-              Edit
-            </Button>
-
-            {/* Delete Button */}
-            <Button
-              variant="contained"
-              color="error"
-              onClick={() => handleDelete(invoice._id)}
-            >
-              Delete
-            </Button>
-          </Box>
+            category={invoice.category}
+            name={invoice.name}
+            amount={invoice.amount}
+            onEdit={() => handleEdit(invoice)}
+            onDelete={() => handleDelete(invoice._id)}
+          />
         ))
       ) : (
         <Typography>No invoices found.</Typography>
       )}
 
       {/* Edit Invoice Dialog */}
-      <Dialog open={Boolean(editingInvoice)} onClose={() => setEditingInvoice(null)}>
+      <Dialog
+        open={Boolean(editingInvoice)}
+        onClose={() => setEditingInvoice(null)}
+      >
         <DialogTitle>Edit Invoice</DialogTitle>
         <DialogContent>
           <TextField
@@ -182,7 +206,9 @@ export default function InvoicesPage() {
             fullWidth
             type="number"
             value={amount === 0 ? "" : amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0)}
+            onChange={(e) =>
+              setAmount(parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0)
+            }
             sx={{ marginBottom: 2 }}
           />
         </DialogContent>
