@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { SignedIn } from "@clerk/nextjs";
 import { toast } from "react-toastify";
-import { PieChart } from '@mui/x-charts/PieChart';
+import { PieChart } from "@mui/x-charts/PieChart";
 interface Invoice {
   _id: string;
   category: string;
@@ -50,7 +50,8 @@ export default function HomePage() {
         // Calculate total sum per category
         const sums: Record<string, number> = {};
         invoicesData.forEach((invoice: Invoice) => {
-          sums[invoice.category] = (sums[invoice.category] || 0) + Number(invoice.amount);
+          sums[invoice.category] =
+            (sums[invoice.category] || 0) + Number(invoice.amount);
         });
         setCategorySums(sums);
 
@@ -83,8 +84,13 @@ export default function HomePage() {
     fetchData();
   }, []);
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
-  const totalSpent = Object.values(categorySums).reduce((sum, val) => sum + val, 0);
-  const budgetUsedPercentage = totalBudget ? (totalSpent / totalBudget) * 100 : 0;
+  const totalSpent = Object.values(categorySums).reduce(
+    (sum, val) => sum + val,
+    0
+  );
+  const budgetUsedPercentage = totalBudget
+    ? (totalSpent / totalBudget) * 100
+    : 0;
 
   const chartData = budgets.map((budget) => ({
     name: budget.category,
@@ -97,91 +103,133 @@ export default function HomePage() {
     let hash = 0;
     // Create a hash from the string
     for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     // Convert hash to RGB color
     let color = "#";
     for (let i = 0; i < 3; i++) {
-        let value = (hash >> (i * 8)) & 0xFF;
-        color += ("00" + value.toString(16)).slice(-2);
+      let value = (hash >> (i * 8)) & 0xff;
+      color += ("00" + value.toString(16)).slice(-2);
     }
     return color;
-}
+  }
 
   return (
     <SignedIn>
-      
-      <Box p={3}>
-        <Card sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'center', boxShadow: 3 }}>
-          <Box sx={{ width: { xs: '100%', md: '50%' } }}>
-            <Typography variant="h6">Monthly Overview</Typography>
-            <Typography variant="h4" sx={{ mt: 2 }}>
-              ${totalSpent} <Typography component="span" color="textSecondary" variant="body2">of budget</Typography>
-            </Typography>
-            <Typography color="success.main">↓ ${totalBudget - totalSpent} Remaining</Typography>
-            <LinearProgress variant="determinate" value={budgetUsedPercentage} sx={{ mt: 2 }} />
-            <Typography variant="body2" color="textSecondary">{budgetUsedPercentage.toFixed(0)}% of monthly budget used</Typography>
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        // Main container
+        <Box sx={{ padding: "20px" }}>
+          <Box pb={3}>
+            <Card
+              sx={{
+                p: 3,
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                justifyContent: "space-between",
+                alignItems: "center",
+                boxShadow: 3,
+              }}
+            >
+              <Box sx={{ width: { xs: "100%", md: "30%" }, height: 300 }}>
+                <Typography variant="h6" fontWeight="bold">
+                  Monthly Overview
+                </Typography>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                  sx={{ mt: 6 }}
+                >
+                  Total Spent
+                </Typography>
+                <Typography variant="h4" fontWeight="bold">
+                  ${totalSpent}{" "}
+                  <Typography
+                    component="span"
+                    color="textSecondary"
+                    variant="body2"
+                  >
+                    of budget
+                  </Typography>
+                </Typography>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                  sx={{ mt: 2 }}
+                >
+                  Remaining Budget
+                </Typography>
+                <Typography color="success.main">
+                  ↓ ${totalBudget - totalSpent} Remaining
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={budgetUsedPercentage}
+                  sx={{ mt: 4, height: 10, borderRadius: 4 }}
+                />
+                <Typography variant="body2" color="textSecondary">
+                  {budgetUsedPercentage.toFixed(0)}% of monthly budget used
+                </Typography>
+              </Box>
+              <Box sx={{ height: 300, width: 500 }}>
+                <PieChart
+                  series={[
+                    {
+                      data: chartData.map((entry) => ({
+                        id: entry.name,
+                        value: entry.value,
+                        color: stringToColor(entry.name),
+                        label: entry.name,
+                      })),
+                      innerRadius: 60,
+                      outerRadius: 100,
+                      paddingAngle: 0,
+                      cornerRadius: 0,
+                      startAngle: 0,
+                      endAngle: 360,
+                    },
+                  ]}
+                />
+              </Box>
+            </Card>
           </Box>
-          <Box sx={{ height: 300,width: 300 }}>
-            <PieChart
-              series={[
-                {
-                  data: chartData.map((entry) => ({ id: entry.name, value: entry.value, color: stringToColor(entry.name) })),
-                  innerRadius: 60,
-                  outerRadius: 100,
-                  paddingAngle: 0,
-                  cornerRadius: 0,
-                  startAngle: 0,
-                  endAngle: 360,
-                  cx: 150,
-                  cy: 150,
-                //   arcLabel: (item) => `${item.value}%`,
-                //   arcLabelMinAngle: 35,
-                //  arcLabelRadius: '60%',
-      
-                }
-              ]}
-            />
-          </Box>
-        </Card>
-      </Box>
-
-      <Box sx={{ padding: "20px" }}>
-
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
           <Grid container spacing={3}>
             {budgets.map((budget, index) => {
               const sum = categorySums[budget.category] || 0;
-              const ratio = budget.amount ? (sum / budget.amount).toFixed(2) : "N/A";
+              const ratio = budget.amount
+                ? (sum / budget.amount).toFixed(2)
+                : "N/A";
               const progress = budget.amount ? (sum / budget.amount) * 100 : 0;
 
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                    <ExpanseCard
+                  <ExpanseCard
                     category={budget.category}
                     totalSpent={sum}
                     budgetAmount={budget.amount}
                     ratio={ratio}
                     progress={progress}
-                    />
+                  />
                 </Grid>
               );
             })}
           </Grid>
-        )}
-        <Box sx={{ textAlign: "center", mt: 4 }}>
-          <Button variant="contained" color="primary" component={Link} href="/create-invoice" sx={{ px: 3, py: 1 }}>
-            Create Invoice
-          </Button>
+          <Box sx={{ textAlign: "center", mt: 4 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              href="/create-invoice"
+              sx={{ px: 3, py: 1 }}
+            >
+              Create Invoice
+            </Button>
+          </Box>
         </Box>
-
-      </Box>
+      )}
     </SignedIn>
   );
 }
-
-
