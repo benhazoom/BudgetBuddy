@@ -5,6 +5,7 @@ import {
   Button,
   Chip,
   Box,
+  IconButton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,7 +26,19 @@ export default function InvoiceCard({
   onDelete,
 }: InvoiceCardProps) {
   return (
-    <Card sx={{ m: 2, p: 2, borderRadius: 2, boxShadow: 2 }}>
+    <Card
+      sx={{
+        m: 2,
+        p: 2,
+        boxShadow: 2,
+        borderRadius: 2,
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: 3,
+        },
+      }}
+    >
       <CardContent>
         <Box
           sx={{
@@ -42,25 +55,15 @@ export default function InvoiceCard({
               ${amount}
             </Typography>
           </Box>
-          <Chip label={category} variant="outlined" />
-        </Box>
-        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
-            onClick={onEdit}
-          >
-            Edit
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
+          <Box>
+            <IconButton onClick={() => onEdit()} aria-label="edit">
+              <EditIcon />
+            </IconButton>
+            <IconButton onClick={() => onDelete()} aria-label="delete">
+              <DeleteIcon />
+            </IconButton>
+            <Chip label={category} variant="outlined" />
+          </Box>
         </Box>
       </CardContent>
     </Card>

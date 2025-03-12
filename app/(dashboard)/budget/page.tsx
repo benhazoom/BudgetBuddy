@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import BudgetCard from "../../components/BudgetCard";
+
 interface Invoice {
   _id: string;
   name: string;
@@ -29,17 +31,12 @@ interface Budget {
 export default function BudgetPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [categories, setCategories] = useState<string[]>([
-    "Food",
-    "Clothing",
-    "Bills",
-  ]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [categorySums, setCategorySums] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const router = useRouter();
-  //adding new budgeting category
   const [addingCategory, setAddingCategory] = useState<boolean>(false);
   const [postingCategoryTodb, setPostingCategoryTodb] =
     useState<boolean>(false);
@@ -47,7 +44,6 @@ export default function BudgetPage() {
   const [category, setCategory] = useState("");
   const [budget, setBudget] = useState(0);
 
-  // Fetch invoices and budgets
   useEffect(() => {
     async function fetchData() {
       try {
@@ -65,7 +61,6 @@ export default function BudgetPage() {
         setInvoices(invoicesData);
         setBudgets(budgetsData);
 
-        // Add any categories from budgets that are missing in state
         const fetchedCategories = budgetsData.map((b: Budget) => b.category);
         setCategories((prev) => [...new Set([...prev, ...fetchedCategories])]);
       } catch (error) {
@@ -78,7 +73,6 @@ export default function BudgetPage() {
     fetchData();
   }, []);
 
-  // Calculate total spent per category
   useEffect(() => {
     const sums: Record<string, number> = {};
     invoices.forEach((invoice) => {
@@ -88,7 +82,6 @@ export default function BudgetPage() {
     setCategorySums(sums);
   }, [invoices]);
 
-  // Handle budget change
   const handleBudgetChange = (category: string, amount: number) => {
     setBudgets((prev) => {
       const existing = prev.find((b) => b.category === category);
@@ -101,7 +94,6 @@ export default function BudgetPage() {
     });
   };
 
-  // Save budgets to the database
   const saveBudgets = async () => {
     setSaving(true);
     try {
@@ -123,7 +115,6 @@ export default function BudgetPage() {
     }
   };
 
-  // Function to submit the added category
   const addCategory = async () => {
     setPostingCategoryTodb(true);
     if (!name.trim()) return toast.error("Category name cannot be empty");
@@ -139,7 +130,6 @@ export default function BudgetPage() {
 
       if (!res.ok) throw new Error("Failed to add category");
 
-      // Update the UI
       setCategories((prev) => [...prev, name]);
       setBudgets((prev) => [...prev, { category: name, amount: budget }]);
       toast.success("Category added successfully!");
@@ -153,7 +143,6 @@ export default function BudgetPage() {
     }
   };
 
-  // Function to delete category
   const handleDelete = async (category: string) => {
     try {
       const res = await fetch(`/api/budget`, {
@@ -168,7 +157,6 @@ export default function BudgetPage() {
         throw new Error("Failed to delete invoice");
       }
       toast.success("Category deleted successfully.");
-      // Update the state to remove the deleted category
       setCategories((prev) => prev.filter((cat) => cat !== category));
       setBudgets((prev) =>
         prev.filter((budget) => budget.category !== category)
@@ -189,52 +177,27 @@ export default function BudgetPage() {
         <CircularProgress />
       ) : (
         <>
-          {categories.map((category) => (
-            <Box key={category} sx={{ marginBottom: 3 }}>
-              {/* with the regex we make sure that non numbers are not allowed!
-                            mind that type="number" can cause problems like accidental value changes and its ugly anyways" */}
-              <Typography variant="h6">{category}</Typography>
-              <TextField
-                label="Budget"
-                type="text"
-                value={
-                  budgets.find((b) => b.category === category)?.amount || ""
-                }
-                onChange={(e) =>
-                  handleBudgetChange(
-                    category,
-                    parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0
-                  )
-                }
-                fullWidth
-              />
-              <Typography>
-                Sum: {categorySums[category] || 0} / Budget:{" "}
-                {budgets.find((b) => b.category === category)?.amount || 0}
-              </Typography>
-              <Typography>
-                Ratio:{" "}
-                {budgets.find((b) => b.category === category)?.amount
-                  ? (
-                      (categorySums[category] || 0) /
-                      (budgets.find((b) => b.category === category)?.amount ||
-                        1)
-                    ).toFixed(2)
-                  : "N/A"}
-              </Typography>
-              {/* Delete Button */}
-              <Button
-                variant="contained"
-                color="error"
-                onClick={() => handleDelete(category)}
-                sx={{ marginRight: 1 }}
-              >
-                Delete
-              </Button>
-            </Box>
-          ))}
+          {categories.map((category) => {
+            const budgetAmount =
+              budgets.find((b) => b.category === category)?.amount || 0;
+            const totalSpent = categorySums[category] || 0;
+            const ratio = totalSpent / budgetAmount;
+            const progress = (totalSpent / budgetAmount) * 100;
 
-          {/* New Category Input */}
+            return (
+              <BudgetCard
+                key={category}
+                category={category}
+                totalSpent={totalSpent}
+                budgetAmount={budgetAmount}
+                ratio={ratio}
+                progress={progress}
+                onEdit={handleBudgetChange}
+                onDelete={handleDelete}
+              />
+            );
+          })}
+
           <Dialog
             open={Boolean(addingCategory)}
             onClose={() => setAddingCategory(false)}
@@ -286,7 +249,9 @@ export default function BudgetPage() {
           >
             Add Category
           </Button>
-          <Button
+
+          
+          {/* <Button
             variant="contained"
             color="primary"
             onClick={saveBudgets}
@@ -294,7 +259,7 @@ export default function BudgetPage() {
             sx={{ marginTop: 3 }}
           >
             {saving ? "Saving..." : "Save Budgets"}
-          </Button>
+          </Button> */}
         </>
       )}
     </Box>

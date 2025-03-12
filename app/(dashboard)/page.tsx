@@ -92,10 +92,22 @@ export default function HomePage() {
     ? (totalSpent / totalBudget) * 100
     : 0;
 
-  const chartData = budgets.map((budget) => ({
+  const colors = [
+    "#3B82F6",
+    "#10B981",
+    "#EF4444",
+    "#F59E0B",
+    "#1E3A8A",
+    "#D946EF",
+    "#4B0082",
+    "#ffe137",
+    "#6e5109",
+  ];
+
+  const chartData = budgets.map((budget, index) => ({
     name: budget.category,
     value: categorySums[budget.category] || 0,
-    color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+    color: colors[index % colors.length],
   }));
 
   //An injective function (one-to-one function) ensures that different inputs always map to different colors
@@ -181,7 +193,7 @@ export default function HomePage() {
                       data: chartData.map((entry) => ({
                         id: entry.name,
                         value: entry.value,
-                        color: stringToColor(entry.name),
+                        color: entry.color,
                         label: entry.name,
                       })),
                       innerRadius: 60,

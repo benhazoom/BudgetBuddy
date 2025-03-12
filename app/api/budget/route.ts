@@ -16,7 +16,12 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
-    const budgets = await req.json();
+    let budgets = await req.json();
+
+    // Ensure budgets is an array
+    if (!Array.isArray(budgets)) {
+      budgets = [budgets];
+    }
 
     const db = await connectDB();
     
