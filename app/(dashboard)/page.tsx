@@ -12,6 +12,7 @@ import Button from "@mui/material/Button";
 import { SignedIn } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { IconName } from "lucide-react/dynamic";
 interface Invoice {
   _id: string;
   category: string;
@@ -21,6 +22,7 @@ interface Invoice {
 interface Budget {
   category: string;
   amount: number;
+  iconName: string;
 }
 
 export default function HomePage() {
@@ -205,6 +207,9 @@ export default function HomePage() {
               </Box>
             </Card>
           </Box>
+
+          {/*  Grid container for the category cards */}
+
           <Grid container spacing={3}>
             {budgets.map((budget, index) => {
               const sum = categorySums[budget.category] || 0;
@@ -221,6 +226,7 @@ export default function HomePage() {
                     budgetAmount={budget.amount}
                     ratio={ratio}
                     progress={progress}
+                    iconName={budget.iconName as IconName}
                   />
                 </Grid>
               );

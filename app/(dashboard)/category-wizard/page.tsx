@@ -31,6 +31,7 @@ interface Category {
   icon: React.ReactNode;
   defaultBudget: number;
   color: string;
+  iconName: string;
 }
 
 interface CategorySelectorProps {
@@ -46,72 +47,84 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
     {
       name: "Housing",
       icon: <Home size={24} />,
+      iconName: "home",
       defaultBudget: 500,
       color: "#9C27B0",
     },
     {
       name: "Food & Groceries",
       icon: <UtensilsCrossed size={24} />,
+      iconName: "utensils-crossed",
       defaultBudget: 500,
       color: "#FF5252",
     },
     {
       name: "Transportation",
       icon: <Car size={24} />,
+      iconName: "car",
       defaultBudget: 500,
       color: "#8BC34A",
     },
     {
       name: "Health & Insurance",
       icon: <HeartPulse size={24} />,
+      iconName: "heart-pulse",
       defaultBudget: 500,
       color: "#F44336",
     },
     {
       name: "Education & Childcare",
       icon: <GraduationCap size={24} />,
+      iconName: "graduation-cap",
       defaultBudget: 500,
       color: "#673AB7",
     },
     {
       name: "Savings & Investments",
       icon: <Zap size={24} />,
+      iconName: "zap",
       defaultBudget: 500,
       color: "#4CAF50",
     },
     {
       name: "Debt & Loans",
       icon: <Receipt size={24} />,
+      iconName: "receipt",
       defaultBudget: 500,
       color: "#FF9800",
     },
     {
       name: "Household & Maintenance",
       icon: <Home size={24} />,
+      iconName: "home",
       defaultBudget: 500,
       color: "#3F51B5",
     },
     {
       name: "Entertainment & Leisure",
       icon: <Film size={24} />,
+      iconName: "film",
       defaultBudget: 500,
       color: "#E91E63",
     },
     {
       name: "Clothing & Personal Care",
       icon: <ShoppingBag size={24} />,
+      iconName: "shopping-bag",
       defaultBudget: 500,
       color: "#4285F4",
     },
     {
       name: "Taxes & Fees",
       icon: <Receipt size={24} />,
+      iconName: "receipt",
       defaultBudget: 500,
       color: "#FF5722",
     },
     {
-      name: "Gifts & Charity (Tzedakah)",
+      name: "Charity (Tzedakah)",
       icon: <HeartPulse size={24} />,
+      iconName: "heart-pulse",
       defaultBudget: 500,
       color: "#795548",
     },
@@ -136,10 +149,17 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       );
       return;
     }
-    const categoriesToSave = selected.map((category) => ({
-      category,
-      amount: 500,
-    }));
+    const categoriesToSave = selected.map((category) => {
+      const selectedCategory = predefinedCategories.find(
+        (cat) => cat.name === category
+      );
+      console.log("selectedCategory", selectedCategory);
+      return {
+        category,
+        amount: 500,
+        iconName: selectedCategory?.iconName,
+      };
+    });
 
     await fetch("/api/budget", {
       method: "POST",

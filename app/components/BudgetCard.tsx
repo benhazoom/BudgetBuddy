@@ -21,22 +21,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
-
-// Map category to icon
-const getCategoryIcon = (category: string) => {
-  switch (category.toLowerCase()) {
-    case "food":
-      return <RestaurantIcon sx={{ color: "#FF5252" }} />;
-    case "clothing":
-      return <ShoppingBagIcon sx={{ color: "#4285F4" }} />;
-    case "bills":
-      return <PaymentIcon sx={{ color: "#FF9800" }} />;
-    case "video games":
-      return <SportsEsportsIcon sx={{ color: "#42A5F5" }} />;
-    default:
-      return <HomeIcon sx={{ color: "#9C27B0" }} />;
-  }
-};
+import { DynamicIcon, IconName } from "lucide-react/dynamic";
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -131,7 +116,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                 mr: 2,
               }}
             >
-              {getCategoryIcon(category)}
+              {/* <DynamicIcon name={iconName as IconName} /> */}
             </Box>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
               <strong>{category}</strong>

@@ -250,7 +250,6 @@ export default function BudgetPage() {
             Add Category
           </Button>
 
-          
           {/* <Button
             variant="contained"
             color="primary"

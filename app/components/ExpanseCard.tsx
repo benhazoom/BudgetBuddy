@@ -12,22 +12,24 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import HomeIcon from "@mui/icons-material/Home";
+import IconRenderer from "./IconRenderer";
+import { DynamicIcon, IconName } from "lucide-react/dynamic";
 
-// Map category to icon
-const getCategoryIcon = (category: string) => {
-  switch (category.toLowerCase()) {
-    case "food":
-      return <RestaurantIcon sx={{ color: "#FF5252" }} />;
-    case "clothing":
-      return <ShoppingBagIcon sx={{ color: "#4285F4" }} />;
-    case "bills":
-      return <PaymentIcon sx={{ color: "#FF9800" }} />;
-    case "video games":
-      return <SportsEsportsIcon sx={{ color: "#42A5F5" }} />;
-    default:
-      return <HomeIcon sx={{ color: "#9C27B0" }} />;
-  }
-};
+// // Map category to icon
+// const getCategoryIcon = (category: string) => {
+//   switch (category.toLowerCase()) {
+//     case "food":
+//       return <RestaurantIcon sx={{ color: "#FF5252" }} />;
+//     case "clothing":
+//       return <ShoppingBagIcon sx={{ color: "#4285F4" }} />;
+//     case "bills":
+//       return <PaymentIcon sx={{ color: "#FF9800" }} />;
+//     case "video games":
+//       return <SportsEsportsIcon sx={{ color: "#42A5F5" }} />;
+//     default:
+//       return <HomeIcon sx={{ color: "#9C27B0" }} />;
+//   }
+// };
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -42,6 +44,7 @@ interface ExpenseCardProps {
   budgetAmount: number;
   ratio: string;
   progress: number;
+  iconName: String;
 }
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({
@@ -50,6 +53,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
   budgetAmount,
   ratio,
   progress,
+  iconName,
 }) => {
   const isUnder = totalSpent <= budgetAmount;
   const progressColor = getProgressColor(progress);
@@ -77,7 +81,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
               mr: 2,
             }}
           >
-            {getCategoryIcon(category)}
+            <DynamicIcon name={iconName as IconName} />
           </Box>
           <Typography variant="h6">
             <strong>{category}</strong>

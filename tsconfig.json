@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, ".next/types/app/api/invoices/route.js", "lib/mongodb.ts"  ],
+, ".next/types/app/api/invoices/route.js", "lib/mongodb.ts", "app/components/IconRenderer.jsx"  ],
   "exclude": [
     "node_modules"
   ]

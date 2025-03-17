@@ -26,10 +26,11 @@ export async function POST(req: Request) {
     const db = await connectDB();
     
     // Save each budget for the user
-    for (const { category, amount } of budgets) {
+    for (const { category, amount, iconName } of budgets) {
       await db.collection("budgets").updateOne(
-        { userId, category },
+        { userId, category, iconName },
         { $set: { amount } },
+
         { upsert: true }
       );
     }
