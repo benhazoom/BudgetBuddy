@@ -47,6 +47,10 @@ export default function HomePage() {
         setInvoices(invoicesData);
         setBudgets(budgetsData);
 
+        //testing
+        console.log(invoicesData);
+        console.log(budgetsData);
+
         // Calculate total sum per category
         const sums: Record<string, number> = {};
         invoicesData.forEach((invoice: Invoice) => {
@@ -57,22 +61,8 @@ export default function HomePage() {
 
         // Check if there are no budgets and notify the user
         if (budgetsData.length === 0) {
-          toast.info(
-            "It appears you don't have budgeting categories yet. Default budgeting categories will be added. You can add and edit categories manually in the budget section."
-          );
-          await fetch("/api/budget", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify([
-              { category: "Food", amount: 500 },
-              { category: "Clothing", amount: 500 },
-              { category: "Bills", amount: 500 },
-            ]),
-          }).then(() => {
-            window.location.reload(); // Reload the page to fetch the new budgets
-          });
+          // Redirect to the category wizard page
+          window.location.href = "/category-wizard";
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -131,6 +121,13 @@ export default function HomePage() {
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
           <CircularProgress />
+        </Box>
+      ) : budgets.length === 0 ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+          <Typography variant="h6">
+            Welcome to Budget Buddy! It appears that you have no budget
+            categories available. Please select budget categories.
+          </Typography>
         </Box>
       ) : (
         // Main container
