@@ -185,7 +185,7 @@ export default function InvoicesPage() {
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
-            sx={{ marginBottom: 2 }}
+            sx={{ marginBottom: 2, marginTop: 2 }}
           />
           <TextField
             select

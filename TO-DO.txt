@@ -1,9 +1,8 @@
 When editing invoice - amount when you delete and type it leads with a zero
 Centrelize fetches into state to be showen faster across the application
-implement redux and rtk quary
 
-loader when adding category
-
-invoices 
- //TODO 1.Sort invoices by category
- //TODO 2.provide default categories
+ //DONEloaderes when adding category 
+ //DONE 1.Sort invoices by category DONE
+ //DONE 2.budgeting wizard when no budgets exists
+ //TODO 3.re-rendering budgetCard when editing complete
+ //TODO 4.cleaning up the code and removing what isnt used

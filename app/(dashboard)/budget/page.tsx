@@ -82,13 +82,18 @@ export default function BudgetPage() {
     setCategorySums(sums);
   }, [invoices]);
 
-  const handleBudgetChange = (category: string, amount: number) => {
+  const handleBudgetChange = (
+    category: string,
+    amount: number,
+    iconName: string
+  ) => {
     setBudgets((prev) => {
       const existing = prev.find((b) => b.category === category);
       if (existing) {
         existing.amount = amount;
+        existing.iconName = iconName;
       } else {
-        prev.push({ category, amount, iconName: "home" });
+        prev.push({ category, amount, iconName });
       }
       return [...prev];
     });

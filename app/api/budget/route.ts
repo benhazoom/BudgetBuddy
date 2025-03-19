@@ -30,7 +30,6 @@ export async function POST(req: Request) {
       await db.collection("budgets").updateOne(
         { userId, category, iconName },
         { $set: { amount } },
-
         { upsert: true }
       );
     }
@@ -38,6 +37,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Budgets saved successfully" });
   } catch (error) {
     return NextResponse.json({ message: "Failed to save budgets" }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const { userId } = await auth();
+    const { category, amount, iconName } = await req.json();
+
+    const db = await connectDB();
+    const result = await db.collection("budgets").updateOne(
+      { userId, category},
+      { $set: { amount,iconName } },
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ message: "Budget not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Budget updated successfully" });
+  } catch (error) {
+    return NextResponse.json({ message: "Failed to update budget" }, { status: 500 });
   }
 }
 

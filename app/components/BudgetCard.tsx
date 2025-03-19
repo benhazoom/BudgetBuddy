@@ -18,6 +18,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import { getCategoryIcon } from "./BudgetBuddyIcons";
+import { IconPicker } from "./BudgetBuddyIcons";
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -33,7 +34,7 @@ interface BudgetCardProps {
   iconName: string;
   ratio: number;
   progress: number;
-  onEdit: (category: string, amount: number) => void;
+  onEdit: (category: string, amount: number, iconName: string) => void;
   onDelete: (category: string) => void;
 }
 
@@ -50,6 +51,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newAmount, setNewAmount] = useState(budgetAmount);
   const [saving, setSaving] = useState(false);
+  const [icon, setIcon] = useState("home");
 
   const handleEditClick = () => {
     setIsDialogOpen(true);
@@ -62,16 +64,19 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const budgets = [{ category, amount: newAmount, iconName }];
       const res = await fetch("/api/budget", {
-        method: "POST",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(budgets),
+        body: JSON.stringify({
+          category,
+          amount: newAmount,
+          iconName: icon,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to save budgets");
-      onEdit(category, newAmount);
-      toast.success("Budgets saved successfully");
+      onEdit(category, newAmount, icon);
+      toast.success("Budget saved successfully");
       // toast.router.push("/");
     } catch (error) {
       console.error("Error saving budgets:", error);
@@ -170,36 +175,13 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           <Typography variant="body2" sx={{ mr: 2 }}>
             Select Icon:
           </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            {[
-              "home",
-              "utensils-crossed",
-              "shirt",
-              "receipt",
-              "gamepad-2",
-              "car",
-              "heart-pulse",
-              "graduation-cap",
-              "plane",
-              "film",
-              "dog",
-              "zap",
-              "shopping-cart",
-              "book-open",
-              "credit-card",
-              "dumbbell",
-              "gift",
-              "briefcase",
-              "music",
-              "paw-print",
-              "library",
-              "users",
-              "shopping-bag",
-              "utensils",
-            ].map((icon) => (
-              <Box>{getCategoryIcon(icon)}</Box>
-            ))}
-          </Box>
+
+          <IconPicker
+            selectedIcon={icon}
+            onSelect={(selectedIcon) => {
+              setIcon(selectedIcon);
+            }}
+          />
         </DialogContent>
 
         <DialogActions>
