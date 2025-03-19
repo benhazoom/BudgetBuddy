@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import BudgetCard from "../../components/BudgetCard";
-
+import { IconPicker } from "../../components/BudgetBuddyIcons";
 interface Invoice {
   _id: string;
   name: string;
@@ -26,6 +26,7 @@ interface Invoice {
 interface Budget {
   category: string;
   amount: number;
+  iconName: string;
 }
 
 export default function BudgetPage() {
@@ -35,14 +36,13 @@ export default function BudgetPage() {
   const [categorySums, setCategorySums] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
   const router = useRouter();
   const [addingCategory, setAddingCategory] = useState<boolean>(false);
   const [postingCategoryTodb, setPostingCategoryTodb] =
     useState<boolean>(false);
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
   const [budget, setBudget] = useState(0);
+  const [icon, setIcon] = useState("home");
 
   useEffect(() => {
     async function fetchData() {
@@ -88,31 +88,10 @@ export default function BudgetPage() {
       if (existing) {
         existing.amount = amount;
       } else {
-        prev.push({ category, amount });
+        prev.push({ category, amount, iconName: "home" });
       }
       return [...prev];
     });
-  };
-
-  const saveBudgets = async () => {
-    setSaving(true);
-    try {
-      const res = await fetch("/api/budget", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(budgets),
-      });
-
-      if (!res.ok) throw new Error("Failed to save budgets");
-      toast.success("Budgets saved successfully");
-
-      router.push("/");
-    } catch (error) {
-      console.error("Error saving budgets:", error);
-      toast.error("Error saving budgets");
-    } finally {
-      setSaving(false);
-    }
   };
 
   const addCategory = async () => {
@@ -122,16 +101,23 @@ export default function BudgetPage() {
       return toast.error("Category already exists");
 
     try {
-      const res = await fetch("/api/category", {
+      const res = await fetch("/api/budget", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category: name, amount: budget }),
+        body: JSON.stringify({
+          category: name,
+          amount: budget,
+          iconName: icon,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to add category");
 
       setCategories((prev) => [...prev, name]);
-      setBudgets((prev) => [...prev, { category: name, amount: budget }]);
+      setBudgets((prev) => [
+        ...prev,
+        { category: name, amount: budget, iconName: icon },
+      ]);
       toast.success("Category added successfully!");
       setAddingCategory(false);
     } catch (error) {
@@ -189,6 +175,10 @@ export default function BudgetPage() {
                 key={category}
                 category={category}
                 totalSpent={totalSpent}
+                iconName={
+                  budgets.find((b) => b.category === category)?.iconName ||
+                  "defaultIcon"
+                }
                 budgetAmount={budgetAmount}
                 ratio={ratio}
                 progress={progress}
@@ -198,6 +188,7 @@ export default function BudgetPage() {
             );
           })}
 
+          {/* adding category dialog */}
           <Dialog
             open={Boolean(addingCategory)}
             onClose={() => setAddingCategory(false)}
@@ -222,6 +213,13 @@ export default function BudgetPage() {
                   )
                 }
                 sx={{ marginBottom: 2 }}
+              />
+              <IconPicker
+                selectedIcon={icon}
+                onSelect={(selectedIcon) => {
+                  setIcon(selectedIcon);
+                  console.log(selectedIcon, "selectedIcon");
+                }}
               />
             </DialogContent>
             <DialogActions>
@@ -249,16 +247,6 @@ export default function BudgetPage() {
           >
             Add Category
           </Button>
-
-          {/* <Button
-            variant="contained"
-            color="primary"
-            onClick={saveBudgets}
-            disabled={saving}
-            sx={{ marginTop: 3 }}
-          >
-            {saving ? "Saving..." : "Save Budgets"}
-          </Button> */}
         </>
       )}
     </Box>

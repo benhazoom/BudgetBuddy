@@ -50,8 +50,8 @@ export default function HomePage() {
         setBudgets(budgetsData);
 
         //testing
-        console.log(invoicesData);
-        console.log(budgetsData);
+        console.log("invoicesData", invoicesData);
+        console.log("budgetsData", budgetsData);
 
         // Calculate total sum per category
         const sums: Record<string, number> = {};
@@ -123,13 +123,6 @@ export default function HomePage() {
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
           <CircularProgress />
-        </Box>
-      ) : budgets.length === 0 ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
-          <Typography variant="h6">
-            Welcome to Budget Buddy! It appears that you have no budget
-            categories available. Please select budget categories.
-          </Typography>
         </Box>
       ) : (
         // Main container
@@ -226,7 +219,7 @@ export default function HomePage() {
                     budgetAmount={budget.amount}
                     ratio={ratio}
                     progress={progress}
-                    iconName={budget.iconName as IconName}
+                    iconName={budget.iconName}
                   />
                 </Grid>
               );

@@ -12,24 +12,8 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import PaymentIcon from "@mui/icons-material/Payment";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import HomeIcon from "@mui/icons-material/Home";
-import IconRenderer from "./IconRenderer";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
-
-// // Map category to icon
-// const getCategoryIcon = (category: string) => {
-//   switch (category.toLowerCase()) {
-//     case "food":
-//       return <RestaurantIcon sx={{ color: "#FF5252" }} />;
-//     case "clothing":
-//       return <ShoppingBagIcon sx={{ color: "#4285F4" }} />;
-//     case "bills":
-//       return <PaymentIcon sx={{ color: "#FF9800" }} />;
-//     case "video games":
-//       return <SportsEsportsIcon sx={{ color: "#42A5F5" }} />;
-//     default:
-//       return <HomeIcon sx={{ color: "#9C27B0" }} />;
-//   }
-// };
+import { getCategoryIcon } from "./BudgetBuddyIcons";
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -73,16 +57,16 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
     >
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Box
+            <Box
             sx={{
               p: 1.5,
               borderRadius: "50%",
               backgroundColor: "rgba(0,0,0,0.04)",
               mr: 2,
             }}
-          >
-            <DynamicIcon name={iconName as IconName} />
-          </Box>
+            >
+            {getCategoryIcon(iconName)}
+            </Box>
           <Typography variant="h6">
             <strong>{category}</strong>
           </Typography>

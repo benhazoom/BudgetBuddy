@@ -13,15 +13,11 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import PaymentIcon from "@mui/icons-material/Payment";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import HomeIcon from "@mui/icons-material/Home";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
-import { DynamicIcon, IconName } from "lucide-react/dynamic";
+import { getCategoryIcon } from "./BudgetBuddyIcons";
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -34,6 +30,7 @@ interface BudgetCardProps {
   category: string;
   totalSpent: number;
   budgetAmount: number;
+  iconName: string;
   ratio: number;
   progress: number;
   onEdit: (category: string, amount: number) => void;
@@ -44,6 +41,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   category,
   totalSpent,
   budgetAmount,
+  iconName,
   ratio,
   progress,
   onEdit,
@@ -64,7 +62,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const budgets = [{ category, amount: newAmount }];
+      const budgets = [{ category, amount: newAmount, iconName }];
       const res = await fetch("/api/budget", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,7 +114,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                 mr: 2,
               }}
             >
-              {/* <DynamicIcon name={iconName as IconName} /> */}
+              {getCategoryIcon(iconName)}
             </Box>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
               <strong>{category}</strong>
@@ -168,7 +166,42 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             value={newAmount}
             onChange={(e) => setNewAmount(Number(e.target.value))}
           />
+          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}></Box>
+          <Typography variant="body2" sx={{ mr: 2 }}>
+            Select Icon:
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            {[
+              "home",
+              "utensils-crossed",
+              "shirt",
+              "receipt",
+              "gamepad-2",
+              "car",
+              "heart-pulse",
+              "graduation-cap",
+              "plane",
+              "film",
+              "dog",
+              "zap",
+              "shopping-cart",
+              "book-open",
+              "credit-card",
+              "dumbbell",
+              "gift",
+              "briefcase",
+              "music",
+              "paw-print",
+              "library",
+              "users",
+              "shopping-bag",
+              "utensils",
+            ].map((icon) => (
+              <Box>{getCategoryIcon(icon)}</Box>
+            ))}
+          </Box>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
           <Button onClick={handleSave} color="primary">
