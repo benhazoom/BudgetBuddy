@@ -9,22 +9,33 @@ import {
   Button,
   Grid,
   Checkbox,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import {
   UtensilsCrossed,
   ShoppingBag,
   Receipt,
-  Gamepad2,
   Car,
   Home,
   HeartPulse,
   GraduationCap,
-  Plane,
   Film,
-  Dog,
   Zap,
 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useCurrencyUtils } from "../../utils/currency";
+import { useCurrency } from "../../contexts/CurrencyContext";
+
+const currencies = [
+  { code: "NIS", symbol: "₪", name: "Israeli Shekel" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "JPY", symbol: "¥", name: "Japanese Yen" },
+];
 
 interface Category {
   name: string;
@@ -43,6 +54,12 @@ interface CategorySelectorProps {
 const CategorySelector: React.FC<CategorySelectorProps> = ({
   onCategoriesSelected,
 }) => {
+  const { formatCurrency } = useCurrencyUtils();
+  const { currency, setCurrency } = useCurrency();
+  const [tempCurrency, setTempCurrency] = useState(currency || "NIS");
+  const [selectedCategories, setSelectedCategories] = useState<{
+    [key: string]: boolean;
+  }>({});
   const predefinedCategories: Category[] = [
     {
       name: "Housing",
@@ -52,7 +69,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       color: "#9C27B0",
     },
     {
-      name: "Food & Groceries",
+      name: "Groceries",
       icon: <UtensilsCrossed size={24} />,
       iconName: "utensils-crossed",
       defaultBudget: 500,
@@ -84,7 +101,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       icon: <Zap size={24} />,
       iconName: "zap",
       defaultBudget: 500,
-      color: "#4CAF50",
+      color: "#FFC107",
     },
     {
       name: "Debt & Loans",
@@ -115,9 +132,9 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       color: "#4285F4",
     },
     {
-      name: "Taxes & Fees",
-      icon: <Receipt size={24} />,
-      iconName: "receipt",
+      name: "Restaurants",
+      icon: <UtensilsCrossed size={24} />,
+      iconName: "utensils-crossed",
       defaultBudget: 500,
       color: "#FF5722",
     },
@@ -129,15 +146,18 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       color: "#795548",
     },
   ];
-  const [selectedCategories, setSelectedCategories] = useState<{
-    [key: string]: boolean;
-  }>({});
 
   const handleToggleCategory = (categoryName: string) => {
     setSelectedCategories((prev) => ({
       ...prev,
       [categoryName]: !prev[categoryName],
     }));
+  };
+
+  const handleCurrencyChange = (event: any) => {
+    const newCurrency = event.target.value;
+    setTempCurrency(newCurrency);
+    setCurrency(newCurrency);
   };
 
   const handleDone = async () => {
@@ -149,11 +169,11 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       );
       return;
     }
+
     const categoriesToSave = selected.map((category) => {
       const selectedCategory = predefinedCategories.find(
         (cat) => cat.name === category
       );
-      console.log("selectedCategory", selectedCategory);
       return {
         category,
         amount: 500,
@@ -168,7 +188,6 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
       },
       body: JSON.stringify(categoriesToSave),
     });
-    //redirect to the dashboard
     window.location.href = "/";
   };
 
@@ -185,20 +204,68 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
     >
       <CardContent>
         <Typography
-          variant="h5"
+          variant="h4"
           gutterBottom
-          sx={{ fontWeight: "bold", mb: 3 }}
+          sx={{ fontWeight: "bold", mb: 4, textAlign: "center" }}
         >
-          Select Budget Categories
+          Welcome to BudgetBuddy
         </Typography>
-        <Typography variant="body1" color="text.secondary" gutterBottom>
-          You don't have any budget categories yet. Please select the categories
-          you want to track:
+
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            fontWeight: "medium",
+            mb: 3,
+            textAlign: "center",
+            color: "text.secondary",
+          }}
+        >
+          Let's set up your budget categories
+        </Typography>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography
+            variant="subtitle1"
+            gutterBottom
+            sx={{ fontWeight: "medium" }}
+          >
+            First, select your preferred currency
+          </Typography>
+          <FormControl fullWidth>
+            <InputLabel>Default Currency</InputLabel>
+            <Select
+              value={tempCurrency}
+              label="Default Currency"
+              onChange={handleCurrencyChange}
+            >
+              {currencies.map((curr) => (
+                <MenuItem key={curr.code} value={curr.code}>
+                  {curr.name} ({curr.symbol})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Typography
+          variant="subtitle1"
+          gutterBottom
+          sx={{ fontWeight: "medium", mb: 2 }}
+        >
+          Select the categories you want to track:
         </Typography>
 
         <Grid container spacing={2} sx={{ mt: 2 }}>
           {predefinedCategories.map((category) => (
-            <Grid item xs={12} sm={10} md={8} lg={6} key={category.name}>
+            <Grid
+              item
+              xs={12}
+              sm={10}
+              md={8}
+              lg={6}
+              key={`${category.name}-${tempCurrency}`}
+            >
               <Box
                 sx={{
                   border: "1px solid",
@@ -239,7 +306,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
                       {category.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Budget: ${category.defaultBudget}
+                      Default Budget: {formatCurrency(category.defaultBudget)}
                     </Typography>
                   </Box>
                   <Checkbox
@@ -258,14 +325,9 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
             variant="contained"
             size="large"
             onClick={handleDone}
-            sx={{
-              px: 4,
-              py: 1.5,
-              borderRadius: 2,
-              fontWeight: "bold",
-            }}
+            sx={{ px: 4, py: 1.5, borderRadius: 2, fontWeight: "bold" }}
           >
-            Done
+            Continue to Dashboard
           </Button>
         </Box>
       </CardContent>

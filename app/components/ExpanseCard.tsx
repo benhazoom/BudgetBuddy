@@ -14,6 +14,7 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import HomeIcon from "@mui/icons-material/Home";
 import { DynamicIcon, IconName } from "lucide-react/dynamic";
 import { getCategoryIcon } from "./BudgetBuddyIcons";
+import { useCurrencyUtils } from "../utils/currency";
 
 // Get color based on budget usage percentage
 const getProgressColor = (progress: number) => {
@@ -39,6 +40,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
   progress,
   iconName,
 }) => {
+  const { formatCurrency } = useCurrencyUtils();
   const isUnder = totalSpent <= budgetAmount;
   const progressColor = getProgressColor(progress);
 
@@ -57,24 +59,24 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
     >
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <Box
+          <Box
             sx={{
               p: 1.5,
               borderRadius: "50%",
               backgroundColor: "rgba(0,0,0,0.04)",
               mr: 2,
             }}
-            >
+          >
             {getCategoryIcon(iconName)}
-            </Box>
+          </Box>
           <Typography variant="h6">
             <strong>{category}</strong>
           </Typography>
         </Box>
 
         <Typography variant="body2" color="text.secondary" gutterBottom>
-          Spent: <strong>${totalSpent}</strong> / Goal:{" "}
-          <strong>${budgetAmount}</strong>
+          Spent: <strong>{formatCurrency(totalSpent)}</strong> / Goal:{" "}
+          <strong>{formatCurrency(budgetAmount)}</strong>
         </Typography>
 
         <Box sx={{ position: "relative", mt: 1 }}>

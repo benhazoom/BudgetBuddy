@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useCurrencyUtils } from "../utils/currency";
 
 interface InvoiceCardProps {
   category: string;
@@ -25,6 +26,8 @@ export default function InvoiceCard({
   onEdit,
   onDelete,
 }: InvoiceCardProps) {
+  const { formatCurrency } = useCurrencyUtils();
+
   return (
     <Card
       sx={{
@@ -52,7 +55,7 @@ export default function InvoiceCard({
               {name}
             </Typography>
             <Typography variant="h6" color="text.secondary">
-              ${amount}
+              {formatCurrency(amount)}
             </Typography>
           </Box>
           <Box>

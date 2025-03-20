@@ -13,6 +13,8 @@ import { SignedIn } from "@clerk/nextjs";
 import { toast } from "react-toastify";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { IconName } from "lucide-react/dynamic";
+import { useCurrencyUtils } from "../utils/currency";
+
 interface Invoice {
   _id: string;
   category: string;
@@ -26,6 +28,7 @@ interface Budget {
 }
 
 export default function HomePage() {
+  const { formatCurrency } = useCurrencyUtils();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
@@ -150,7 +153,7 @@ export default function HomePage() {
                   Total Spent
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
-                  ${totalSpent}{" "}
+                  {formatCurrency(totalSpent)}{" "}
                   <Typography
                     component="span"
                     color="textSecondary"
@@ -167,7 +170,7 @@ export default function HomePage() {
                   Remaining Budget
                 </Typography>
                 <Typography color="success.main">
-                  ↓ ${totalBudget - totalSpent} Remaining
+                  ↓ {formatCurrency(totalBudget - totalSpent)} Remaining
                 </Typography>
                 <LinearProgress
                   variant="determinate"

@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 // Map category to icon
-export const getCategoryIcon = (category: String) => {
+export const getCategoryIcon = (category: string) => {
   switch (category.toLowerCase()) {
     case "utensils-crossed":
       return <UtensilsCrossed color="#FF5252" />;

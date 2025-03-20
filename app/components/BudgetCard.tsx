@@ -1,31 +1,24 @@
 import React, { useState } from "react";
 import {
-  Typography,
-  Box,
   Card,
   CardContent,
+  Typography,
+  Box,
   LinearProgress,
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   Button,
+  TextField,
+  CircularProgress,
 } from "@mui/material";
-
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Edit, Delete } from "@mui/icons-material";
 import { toast } from "react-toastify";
-import { getCategoryIcon } from "./BudgetBuddyIcons";
+import { useCurrencyUtils } from "../utils/currency";
 import { IconPicker } from "./BudgetBuddyIcons";
-
-// Get color based on budget usage percentage
-const getProgressColor = (progress: number) => {
-  if (progress > 80) return "#f44336"; // red
-  if (progress > 50) return "#ff9800"; // orange
-  return "#4CAF50"; // green
-};
+import { getCategoryIcon } from "./BudgetBuddyIcons";
 
 interface BudgetCardProps {
   category: string;
@@ -38,6 +31,12 @@ interface BudgetCardProps {
   onDelete: (category: string) => void;
 }
 
+const getProgressColor = (progress: number) => {
+  if (progress >= 100) return "#EF4444";
+  if (progress >= 80) return "#F59E0B";
+  return "#10B981";
+};
+
 const BudgetCard: React.FC<BudgetCardProps> = ({
   category,
   totalSpent,
@@ -48,6 +47,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { formatCurrency } = useCurrencyUtils();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newAmount, setNewAmount] = useState(budgetAmount);
   const [saving, setSaving] = useState(false);
@@ -77,7 +77,6 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
       if (!res.ok) throw new Error("Failed to save budgets");
       onEdit(category, newAmount, icon);
       toast.success("Budget saved successfully");
-      // toast.router.push("/");
     } catch (error) {
       console.error("Error saving budgets:", error);
       toast.error("Error saving budgets");
@@ -87,10 +86,6 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
     setIsDialogOpen(false);
   };
 
-  // const handleSave = () => {
-  //   onEdit(category, newAmount);
-  //   setIsDialogOpen(false);
-  // };
   const isUnder = totalSpent <= budgetAmount;
   const progressColor = getProgressColor(progress);
 
@@ -105,7 +100,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
           "&:hover": {
             transform: "translateY(-4px)",
-            boxShadow: 3,
+            boxShadow: 4,
           },
         }}
       >
@@ -121,40 +116,55 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
             >
               {getCategoryIcon(iconName)}
             </Box>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              <strong>{category}</strong>
-            </Typography>
-            <IconButton onClick={handleEditClick} aria-label="edit">
-              <EditIcon />
-            </IconButton>
-            <IconButton onClick={() => onDelete(category)} aria-label="delete">
-              <DeleteIcon />
-            </IconButton>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="h6" component="div">
+                {category}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Budget: {formatCurrency(budgetAmount)}
+              </Typography>
+            </Box>
+            <Box>
+              <IconButton onClick={handleEditClick} color="primary">
+                <Edit />
+              </IconButton>
+              <IconButton onClick={() => onDelete(category)} color="error">
+                <Delete />
+              </IconButton>
+            </Box>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Spent: <strong>${totalSpent}</strong> / Goal:{" "}
-            <strong>${budgetAmount}</strong>
-          </Typography>
-
-          <Box sx={{ position: "relative", mt: 1 }}>
+          <Box sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 1,
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                Spent: {formatCurrency(totalSpent)}
+              </Typography>
+              <Typography
+                variant="body2"
+                color={isUnder ? "success.main" : "error.main"}
+              >
+                {isUnder ? "Under Budget" : "Over Budget"}
+              </Typography>
+            </Box>
             <LinearProgress
               variant="determinate"
               value={Math.min(progress, 100)}
               sx={{
                 height: 8,
                 borderRadius: 4,
-                backgroundColor: "rgba(0,0,0,0.08)",
+                backgroundColor: "rgba(0,0,0,0.1)",
                 "& .MuiLinearProgress-bar": {
-                  backgroundColor: isUnder ? progressColor : "#f44336",
+                  backgroundColor: progressColor,
                 },
               }}
             />
           </Box>
-
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {progress.toFixed(0)}%
-          </Typography>
         </CardContent>
       </Card>
 
@@ -162,32 +172,19 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
         <DialogTitle>Edit Budget</DialogTitle>
         <DialogContent>
           <TextField
-            autoFocus
-            margin="dense"
-            label="Budget Amount"
+            label="Amount"
             type="number"
-            fullWidth
-            variant="outlined"
             value={newAmount}
             onChange={(e) => setNewAmount(Number(e.target.value))}
+            fullWidth
+            sx={{ mt: 2 }}
           />
-          <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}></Box>
-          <Typography variant="body2" sx={{ mr: 2 }}>
-            Select Icon:
-          </Typography>
-
-          <IconPicker
-            selectedIcon={icon}
-            onSelect={(selectedIcon) => {
-              setIcon(selectedIcon);
-            }}
-          />
+          <IconPicker selectedIcon={icon} onSelect={setIcon} />
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>
-          <Button onClick={handleSave} color="primary">
-            Save
+          <Button onClick={handleSave} variant="contained" disabled={saving}>
+            {saving ? <CircularProgress size={24} /> : "Save"}
           </Button>
         </DialogActions>
       </Dialog>
