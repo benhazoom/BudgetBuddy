@@ -1,36 +1,36 @@
 {
-    "name": "MUI-ToolPad-v2",
-    "version": "0.1.0",
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
-    },
-    "dependencies": {
-        "@clerk/nextjs": "^6.11.2",
-        "@emotion/react": "^11",
-        "@emotion/styled": "^11",
-        "@mui/icons-material": "^6",
-        "@mui/material": "^6",
-        "@mui/material-nextjs": "^6",
-        "@mui/x-charts": "^7.27.1",
-        "@toolpad/core": "0.12.0",
-        "lucide-react": "^0.482.0",
-        "mongoose": "^8.10.0",
-        "MUI-ToolPad-v2": "file:",
-        "next": "^15",
-        "react": "^19",
-        "react-dom": "^19",
-        "react-toastify": "^11.0.5",
-        "react-use": "^17.6.0"
-    },
-    "devDependencies": {
-        "@types/node": "^20",
-        "@types/react": "^18",
-        "@types/react-dom": "^18",
-        "eslint": "^8",
-        "eslint-config-next": "^15",
-        "typescript": "^5"
-    }
+  "name": "MUI-ToolPad-v2",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.11.2",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@mui/icons-material": "^6",
+    "@mui/material": "^6",
+    "@mui/material-nextjs": "^6",
+    "@mui/x-charts": "^7.27.1",
+    "@toolpad/core": "0.12.0",
+    "lucide-react": "^0.482.0",
+    "mongoose": "^8.10.0",
+    "MUI-ToolPad-v2": "file:",
+    "next": "^15.1.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-toastify": "^11.0.5",
+    "react-use": "^17.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "^15",
+    "typescript": "^5"
+  }
 }

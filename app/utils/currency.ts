@@ -19,11 +19,12 @@ export function useCurrencyUtils() {
     // Convert amount to number and handle invalid inputs
     const numericAmount = Number(amount);
     if (isNaN(numericAmount)) {
-      return `${symbol}0.00`;
+      return `${symbol}0`;
     }
     
-    // Format the number with 2 decimal places
-    const formattedAmount = numericAmount.toFixed(2);
+    // Format the number with we can use 2 decimal places or rgular, i prefer to use regular
+    // const formattedAmount = numericAmount.toFixed(2);
+    const formattedAmount = numericAmount;
     
     // Add the currency symbol based on the currency
     return `${symbol}${formattedAmount}`;

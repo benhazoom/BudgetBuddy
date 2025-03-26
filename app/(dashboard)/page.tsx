@@ -105,22 +105,6 @@ export default function HomePage() {
     color: colors[index % colors.length],
   }));
 
-  //An injective function (one-to-one function) ensures that different inputs always map to different colors
-  function stringToColor(str: string) {
-    let hash = 0;
-    // Create a hash from the string
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    // Convert hash to RGB color
-    let color = "#";
-    for (let i = 0; i < 3; i++) {
-      let value = (hash >> (i * 8)) & 0xff;
-      color += ("00" + value.toString(16)).slice(-2);
-    }
-    return color;
-  }
-
   return (
     <SignedIn>
       {loading ? (
@@ -133,10 +117,10 @@ export default function HomePage() {
           <Box pb={3}>
             <Card
               sx={{
-                p: 3,
+                p: 2,
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
-                justifyContent: "space-between",
+                // justifyContent: "space-between",
                 alignItems: "center",
                 boxShadow: 3,
               }}
@@ -181,6 +165,8 @@ export default function HomePage() {
                   {budgetUsedPercentage.toFixed(0)}% of monthly budget used
                 </Typography>
               </Box>
+
+              {/* Pie chart */}
               <Box sx={{ height: 300, width: 500 }}>
                 <PieChart
                   series={[
@@ -199,6 +185,7 @@ export default function HomePage() {
                       endAngle: 360,
                     },
                   ]}
+                  width={700}
                 />
               </Box>
             </Card>

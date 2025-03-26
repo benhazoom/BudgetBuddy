@@ -1,5 +1,4 @@
 When editing invoice - amount when you delete and type it leads with a zero
-Centrelize fetches into state to be showen faster across the application
 
  //DONEloaderes when adding category 
  //DONE 1.Sort invoices by category
@@ -7,3 +6,5 @@ Centrelize fetches into state to be showen faster across the application
  //DONE 3.re-rendering budgetCard when editing complete
  //TODO 4.add edit category name option in edit dialog and when changing the name apply the change to the each invoice in the database 
  //TODO 5.cleaning up the code and removing what isn't used
+ //TODO 6.Centrelize fetches into state with RTK to be shown faster across the application
+
