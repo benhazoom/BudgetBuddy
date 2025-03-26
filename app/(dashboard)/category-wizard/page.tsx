@@ -221,7 +221,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
             color: "text.secondary",
           }}
         >
-          Let's set up your budget categories
+          Lets set up your budget categories
         </Typography>
 
         <Box sx={{ mb: 4 }}>
