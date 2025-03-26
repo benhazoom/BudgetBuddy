@@ -51,9 +51,9 @@ interface CategorySelectorProps {
   ) => void;
 }
 
-const CategorySelector: React.FC<CategorySelectorProps> = ({
+const CategorySelector = ({
   onCategoriesSelected,
-}) => {
+}: CategorySelectorProps): JSX.Element => {
   const { formatCurrency } = useCurrencyUtils();
   const { currency, setCurrency } = useCurrency();
   const [tempCurrency, setTempCurrency] = useState(currency || "NIS");
@@ -335,4 +335,6 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   );
 };
 
-export default CategorySelector;
+export default function Page(): JSX.Element {
+  return <CategorySelector onCategoriesSelected={() => {}} />;
+}
