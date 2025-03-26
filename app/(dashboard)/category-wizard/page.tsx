@@ -47,7 +47,7 @@ interface Category {
 
 interface CategorySelectorProps {
   onCategoriesSelected: (
-    categories: Array<{ category: string; amount: number }>
+    categories: Array<{ category: string; amount: number; iconName?: string }>
   ) => void;
 }
 
@@ -221,7 +221,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
             color: "text.secondary",
           }}
         >
-          Lets set up your budget categories
+          Let's set up your budget categories
         </Typography>
 
         <Box sx={{ mb: 4 }}>
