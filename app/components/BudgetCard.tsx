@@ -51,7 +51,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newAmount, setNewAmount] = useState(budgetAmount);
   const [saving, setSaving] = useState(false);
-  const [icon, setIcon] = useState("home");
+  const [icon, setIcon] = useState(iconName);
 
   const handleEditClick = () => {
     setIsDialogOpen(true);
