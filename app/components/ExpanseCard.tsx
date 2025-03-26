@@ -29,7 +29,7 @@ interface ExpenseCardProps {
   budgetAmount: number;
   ratio: string;
   progress: number;
-  iconName: String;
+  iconName: string;
 }
 
 const ExpenseCard: React.FC<ExpenseCardProps> = ({
