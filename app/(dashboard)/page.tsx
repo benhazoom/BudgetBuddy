@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { IconName } from "lucide-react/dynamic";
 import { useCurrencyUtils } from "../utils/currency";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface Invoice {
   _id: string;
@@ -29,6 +30,7 @@ interface Budget {
 
 export default function HomePage() {
   const { formatCurrency } = useCurrencyUtils();
+  const { translate } = useLanguage();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,21 +122,20 @@ export default function HomePage() {
                 p: 2,
                 display: "flex",
                 flexDirection: { xs: "column", md: "row" },
-                // justifyContent: "space-between",
                 alignItems: "center",
                 boxShadow: 3,
               }}
             >
               <Box sx={{ width: { xs: "100%", md: "30%" }, height: 300 }}>
                 <Typography variant="h6" fontWeight="bold">
-                  Monthly Overview
+                  {translate("monthlyOverviewTitle")}
                 </Typography>
                 <Typography
                   color="textSecondary"
                   variant="body2"
                   sx={{ mt: 6 }}
                 >
-                  Total Spent
+                  {translate("totalSpentTitle")}
                 </Typography>
                 <Typography variant="h4" fontWeight="bold">
                   {formatCurrency(totalSpent)}{" "}
@@ -143,7 +144,7 @@ export default function HomePage() {
                     color="textSecondary"
                     variant="body2"
                   >
-                    of budget
+                    {translate("ofBudgetTitle")}
                   </Typography>
                 </Typography>
                 <Typography
@@ -151,10 +152,11 @@ export default function HomePage() {
                   variant="body2"
                   sx={{ mt: 2 }}
                 >
-                  Remaining Budget
+                  {translate("remainingBudgetTitle")}
                 </Typography>
                 <Typography color="success.main">
-                  ↓ {formatCurrency(totalBudget - totalSpent)} Remaining
+                  ↓ {formatCurrency(totalBudget - totalSpent)}{" "}
+                  {translate("remainingTitle")}
                 </Typography>
                 <LinearProgress
                   variant="determinate"
@@ -162,7 +164,8 @@ export default function HomePage() {
                   sx={{ mt: 4, height: 10, borderRadius: 4 }}
                 />
                 <Typography variant="body2" color="textSecondary">
-                  {budgetUsedPercentage.toFixed(0)}% of monthly budget used
+                  {budgetUsedPercentage.toFixed(0)}%{" "}
+                  {translate("budgetUsedTitle")}
                 </Typography>
               </Box>
 
@@ -191,8 +194,7 @@ export default function HomePage() {
             </Card>
           </Box>
 
-          {/*  Grid container for the category cards */}
-
+          {/* Grid container for the category cards */}
           <Grid container spacing={3}>
             {budgets.map((budget, index) => {
               const sum = categorySums[budget.category] || 0;
@@ -223,7 +225,7 @@ export default function HomePage() {
               href="/create-expanse"
               sx={{ px: 3, py: 1 }}
             >
-              Create Expanse
+              {translate("createExpanseTitle")}
             </Button>
           </Box>
         </Box>

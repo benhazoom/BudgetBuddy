@@ -11,8 +11,11 @@ import {
   Paper,
   Button,
   Stack,
+  Divider,
 } from "@mui/material";
 import { useCurrency } from "../../contexts/CurrencyContext";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { LANGUAGES } from "../../lib/translations";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -27,21 +30,29 @@ const currencies = [
 
 export default function SettingsPage() {
   const { currency, setCurrency } = useCurrency();
+  const { language, setLanguage, translate } = useLanguage();
   const [tempCurrency, setTempCurrency] = React.useState(currency);
+  const [tempLanguage, setTempLanguage] = React.useState(language);
   const router = useRouter();
 
   const handleCurrencyChange = (event: any) => {
     setTempCurrency(event.target.value);
   };
 
+  const handleLanguageChange = (event: any) => {
+    setTempLanguage(event.target.value);
+  };
+
   const handleSave = () => {
     setCurrency(tempCurrency);
+    setLanguage(tempLanguage);
     toast.success("Settings saved successfully!");
     router.push("/");
   };
 
   const handleDiscard = () => {
     setTempCurrency(currency);
+    setTempLanguage(language);
     router.push("/");
   };
 
@@ -54,26 +65,47 @@ export default function SettingsPage() {
             onClick={handleDiscard}
             sx={{ mr: 2 }}
           >
-            Back
+            {translate("back")}
           </Button>
-          <Typography variant="h4">Settings</Typography>
+          <Typography variant="h4">{translate("settings")}</Typography>
         </Box>
 
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6" gutterBottom>
-            Currency Settings
+            {translate("currency")}
           </Typography>
 
           <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel>Default Currency</InputLabel>
+            <InputLabel>{translate("defaultCurrency")}</InputLabel>
             <Select
               value={tempCurrency}
-              label="Default Currency"
+              label={translate("defaultCurrency")}
               onChange={handleCurrencyChange}
             >
               {currencies.map((curr) => (
                 <MenuItem key={curr.code} value={curr.code}>
                   {curr.name} ({curr.symbol})
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <Divider sx={{ my: 4 }} />
+
+          <Typography variant="h6" gutterBottom>
+            {translate("language")}
+          </Typography>
+
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel>{translate("language")}</InputLabel>
+            <Select
+              value={tempLanguage}
+              label={translate("language")}
+              onChange={handleLanguageChange}
+            >
+              {Object.entries(LANGUAGES).map(([code, config]) => (
+                <MenuItem key={code} value={code}>
+                  {(config as { name: string }).name}
                 </MenuItem>
               ))}
             </Select>
@@ -85,15 +117,15 @@ export default function SettingsPage() {
             sx={{ mt: 3, justifyContent: "flex-end" }}
           >
             <Button variant="outlined" onClick={handleDiscard}>
-              Discard Changes
+              {translate("discardChanges")}
             </Button>
             <Button
               variant="contained"
               color="primary"
               onClick={handleSave}
-              disabled={tempCurrency === currency}
+              disabled={tempCurrency === currency && tempLanguage === language}
             >
-              Save Changes
+              {translate("saveChanges")}
             </Button>
           </Stack>
         </Box>

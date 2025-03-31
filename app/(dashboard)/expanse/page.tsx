@@ -134,10 +134,6 @@ export default function InvoicesPage() {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Your Expanses
-      </Typography>
-
       <FormControl fullWidth sx={{ marginBottom: 2 }}>
         <InputLabel>Filter by Category</InputLabel>
         <Select

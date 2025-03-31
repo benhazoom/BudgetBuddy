@@ -9,6 +9,7 @@ import {
   CloudCircle as CloudCircleIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
+import { LanguageProvider } from "../contexts/LanguageContext";
 
 function CustomUserButton() {
   return (
@@ -44,7 +45,9 @@ export default function Layout(props: { children: React.ReactNode }) {
         toolbarAccount: CustomUserButton,
       }}
     >
-      <PageContainer>{props.children}</PageContainer>
+      <LanguageProvider>
+        <PageContainer>{props.children}</PageContainer>
+      </LanguageProvider>
     </DashboardLayout>
   );
 }

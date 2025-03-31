@@ -160,10 +160,6 @@ export default function BudgetPage() {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Set Your Budgets
-      </Typography>
-
       {loading ? (
         <CircularProgress />
       ) : (
