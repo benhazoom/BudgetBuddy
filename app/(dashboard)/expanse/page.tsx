@@ -51,17 +51,17 @@ export default function InvoicesPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete invoice");
+        throw new Error("Failed to delete expanse");
       }
 
       // Remove the deleted invoice from the state
       setInvoices((prevInvoices) =>
         prevInvoices.filter((invoice) => invoice._id !== invoiceId)
       );
-      toast.success("Invoice deleted successfully.");
+      toast.success("Expanse deleted successfully.");
     } catch (error) {
-      console.error("Error deleting invoice:", error);
-      toast.error("Error deleting invoice.");
+      console.error("Error deleting expanse:", error);
+      toast.error("Error deleting expanse.");
     }
   };
 
@@ -92,7 +92,7 @@ export default function InvoicesPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update invoice");
+        throw new Error("Failed to update expanse");
       }
 
       // Update the invoice in the state
@@ -103,11 +103,11 @@ export default function InvoicesPage() {
             : invoice
         )
       );
-      toast.success("Invoice updated successfully.");
+      toast.success("Expanse updated successfully.");
       setEditingInvoice(null); // Close the edit form
     } catch (error) {
-      console.error("Error updating invoice:", error);
-      toast.error("Error updating invoice.");
+      console.error("Error updating expanse:", error);
+      toast.error("Error updating expanse.");
     }
   };
 
@@ -115,11 +115,11 @@ export default function InvoicesPage() {
     async function fetchInvoices() {
       try {
         const res = await fetch("/api/invoices");
-        if (!res.ok) throw new Error("Failed to fetch invoices");
+        if (!res.ok) throw new Error("Failed to fetch expanses");
         const data = await res.json();
         setInvoices(data);
       } catch (error) {
-        console.error("Error fetching invoices:", error);
+        console.error("Error fetching expanses:", error);
       } finally {
         setLoading(false);
       }
@@ -135,7 +135,7 @@ export default function InvoicesPage() {
   return (
     <Box sx={{ padding: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Your Invoices
+        Your Expanses
       </Typography>
 
       <FormControl fullWidth sx={{ marginBottom: 2 }}>
@@ -170,7 +170,7 @@ export default function InvoicesPage() {
           />
         ))
       ) : (
-        <Typography>No invoices found.</Typography>
+        <Typography>No Expanses found.</Typography>
       )}
 
       {/* Edit Invoice Dialog */}
@@ -178,7 +178,7 @@ export default function InvoicesPage() {
         open={Boolean(editingInvoice)}
         onClose={() => setEditingInvoice(null)}
       >
-        <DialogTitle>Edit Invoice</DialogTitle>
+        <DialogTitle>Edit Expanse</DialogTitle>
         <DialogContent>
           <TextField
             label="Name"

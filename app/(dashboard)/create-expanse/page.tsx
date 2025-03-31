@@ -65,7 +65,7 @@ export default function CreateInvoice() {
             </TextField>
             <TextField label="Amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
             <Button type="submit" variant="contained" color="primary">
-                Create Invoice
+                Create Expanse
             </Button>
         </Box>
     );

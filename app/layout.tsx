@@ -26,18 +26,18 @@ const NAVIGATION: Navigation = [
     icon: <DashboardIcon />,
   },
   {
-    segment: "invoices",
-    title: "Invoices",
+    segment: "expanse",
+    title: "Expanses",
     icon: <ShoppingCartIcon />,
   },
   {
     segment: "budget",
-    title: "Budget",
+    title: "Budgets",
     icon: <AttachMoneyIcon />,
   },
   {
-    segment: "create-invoice",
-    title: "Create Invoice",
+    segment: "create-expanse",
+    title: "Create Expanse",
     icon: <AddIcon />,
   },
   {

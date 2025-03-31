@@ -220,10 +220,10 @@ export default function HomePage() {
               variant="contained"
               color="primary"
               component={Link}
-              href="/create-invoice"
+              href="/create-expanse"
               sx={{ px: 3, py: 1 }}
             >
-              Create Invoice
+              Create Expanse
             </Button>
           </Box>
         </Box>
