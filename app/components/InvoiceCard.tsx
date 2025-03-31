@@ -10,6 +10,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCurrencyUtils } from "../utils/currency";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface InvoiceCardProps {
   category: string;
@@ -27,6 +28,7 @@ export default function InvoiceCard({
   onDelete,
 }: InvoiceCardProps) {
   const { formatCurrency } = useCurrencyUtils();
+  const { translate } = useLanguage();
 
   return (
     <Card
@@ -59,10 +61,13 @@ export default function InvoiceCard({
             </Typography>
           </Box>
           <Box sx={{ minWidth: "250px" }}>
-            <IconButton onClick={() => onEdit()} aria-label="edit">
+            <IconButton onClick={() => onEdit()} aria-label={translate("edit")}>
               <EditIcon />
             </IconButton>
-            <IconButton onClick={() => onDelete()} aria-label="delete">
+            <IconButton
+              onClick={() => onDelete()}
+              aria-label={translate("delete")}
+            >
               <DeleteIcon />
             </IconButton>
             <Chip label={category} variant="outlined" />

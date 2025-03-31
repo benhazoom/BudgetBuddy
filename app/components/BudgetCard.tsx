@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useCurrencyUtils } from "../utils/currency";
 import { IconPicker } from "./BudgetBuddyIcons";
 import { getCategoryIcon } from "./BudgetBuddyIcons";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface BudgetCardProps {
   category: string;
@@ -48,6 +49,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
   onDelete,
 }) => {
   const { formatCurrency } = useCurrencyUtils();
+  const { translate } = useLanguage();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newAmount, setNewAmount] = useState(budgetAmount);
   const [saving, setSaving] = useState(false);
@@ -76,10 +78,10 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
 
       if (!res.ok) throw new Error("Failed to save budgets");
       onEdit(category, newAmount, icon);
-      toast.success("Budget saved successfully");
+      toast.success(translate("budgetSaved"));
     } catch (error) {
       console.error("Error saving budgets:", error);
-      toast.error("Error saving budgets");
+      toast.error(translate("errorSavingBudget"));
     } finally {
       setSaving(false);
     }
@@ -121,7 +123,7 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
                 {category}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Budget: {formatCurrency(budgetAmount)}
+                {translate("budget")}: {formatCurrency(budgetAmount)}
               </Typography>
             </Box>
             <Box>
@@ -143,13 +145,13 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
               }}
             >
               <Typography variant="body2" color="text.secondary">
-                Spent: {formatCurrency(totalSpent)}
+                {translate("spent")}: {formatCurrency(totalSpent)}
               </Typography>
               <Typography
                 variant="body2"
                 color={isUnder ? "success.main" : "error.main"}
               >
-                {isUnder ? "Under Budget" : "Over Budget"}
+                {isUnder ? translate("underBudget") : translate("overBudget")}
               </Typography>
             </Box>
             <LinearProgress
@@ -169,10 +171,10 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
       </Card>
 
       <Dialog open={isDialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Edit Budget</DialogTitle>
+        <DialogTitle>{translate("editBudget")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Amount"
+            label={translate("amount")}
             type="number"
             value={newAmount}
             onChange={(e) => setNewAmount(Number(e.target.value))}
@@ -182,9 +184,9 @@ const BudgetCard: React.FC<BudgetCardProps> = ({
           <IconPicker selectedIcon={icon} onSelect={setIcon} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleDialogClose}>{translate("cancel")}</Button>
           <Button onClick={handleSave} variant="contained" disabled={saving}>
-            {saving ? <CircularProgress size={24} /> : "Save"}
+            {saving ? <CircularProgress size={24} /> : translate("save")}
           </Button>
         </DialogActions>
       </Dialog>

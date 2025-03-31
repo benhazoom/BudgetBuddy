@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import InvoiceCard from "@/app/components/InvoiceCard";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface Invoice {
   _id: string;
@@ -27,6 +28,7 @@ interface Invoice {
 }
 
 export default function InvoicesPage() {
+  const { translate } = useLanguage();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
@@ -51,17 +53,17 @@ export default function InvoicesPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete expanse");
+        throw new Error(translate("toasts.errorDeletingExpanse"));
       }
 
       // Remove the deleted invoice from the state
       setInvoices((prevInvoices) =>
         prevInvoices.filter((invoice) => invoice._id !== invoiceId)
       );
-      toast.success("Expanse deleted successfully.");
+      toast.success(translate("toasts.expanseDeleted"));
     } catch (error) {
       console.error("Error deleting expanse:", error);
-      toast.error("Error deleting expanse.");
+      toast.error(translate("toasts.errorDeletingExpanse"));
     }
   };
 
@@ -92,7 +94,7 @@ export default function InvoicesPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to update expanse");
+        throw new Error(translate("toasts.errorUpdatingExpanse"));
       }
 
       // Update the invoice in the state
@@ -103,11 +105,11 @@ export default function InvoicesPage() {
             : invoice
         )
       );
-      toast.success("Expanse updated successfully.");
+      toast.success(translate("toasts.expanseUpdated"));
       setEditingInvoice(null); // Close the edit form
     } catch (error) {
       console.error("Error updating expanse:", error);
-      toast.error("Error updating expanse.");
+      toast.error(translate("toasts.errorUpdatingExpanse"));
     }
   };
 
@@ -115,18 +117,19 @@ export default function InvoicesPage() {
     async function fetchInvoices() {
       try {
         const res = await fetch("/api/invoices");
-        if (!res.ok) throw new Error("Failed to fetch expanses");
+        if (!res.ok) throw new Error(translate("toasts.errorFetchingExpanses"));
         const data = await res.json();
         setInvoices(data);
       } catch (error) {
         console.error("Error fetching expanses:", error);
+        toast.error(translate("toasts.errorFetchingExpanses"));
       } finally {
         setLoading(false);
       }
     }
 
     fetchInvoices();
-  }, []);
+  }, [translate]);
 
   const filteredInvoices = filterCategory
     ? invoices.filter((invoice) => invoice.category === filterCategory)
@@ -135,14 +138,14 @@ export default function InvoicesPage() {
   return (
     <Box sx={{ padding: 3 }}>
       <FormControl fullWidth sx={{ marginBottom: 2 }}>
-        <InputLabel>Filter by Category</InputLabel>
+        <InputLabel>{translate("toasts.filterByCategory")}</InputLabel>
         <Select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          label="Filter by Category"
+          label={translate("toasts.filterByCategory")}
         >
           <MenuItem value="">
-            <em>All</em>
+            <em>{translate("toasts.all")}</em>
           </MenuItem>
           {categories.map((option) => (
             <MenuItem key={option} value={option}>
@@ -166,7 +169,7 @@ export default function InvoicesPage() {
           />
         ))
       ) : (
-        <Typography>No Expanses found.</Typography>
+        <Typography>{translate("toasts.noExpanses")}</Typography>
       )}
 
       {/* Edit Invoice Dialog */}
@@ -174,10 +177,10 @@ export default function InvoicesPage() {
         open={Boolean(editingInvoice)}
         onClose={() => setEditingInvoice(null)}
       >
-        <DialogTitle>Edit Expanse</DialogTitle>
+        <DialogTitle>{translate("toasts.editExpanse")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Name"
+            label={translate("name")}
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -185,7 +188,7 @@ export default function InvoicesPage() {
           />
           <TextField
             select
-            label="Category"
+            label={translate("category")}
             fullWidth
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -198,7 +201,7 @@ export default function InvoicesPage() {
             ))}
           </TextField>
           <TextField
-            label="Amount"
+            label={translate("amount")}
             fullWidth
             type="number"
             value={amount === 0 ? "" : amount}
@@ -210,10 +213,10 @@ export default function InvoicesPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditingInvoice(null)} color="secondary">
-            Cancel
+            {translate("cancel")}
           </Button>
           <Button onClick={handleUpdate} color="primary">
-            Update
+            {translate("toasts.update")}
           </Button>
         </DialogActions>
       </Dialog>

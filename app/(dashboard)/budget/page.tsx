@@ -16,6 +16,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import BudgetCard from "../../components/BudgetCard";
 import { IconPicker } from "../../components/BudgetBuddyIcons";
+import { useLanguage } from "../../contexts/LanguageContext";
+
 interface Invoice {
   _id: string;
   name: string;
@@ -30,6 +32,7 @@ interface Budget {
 }
 
 export default function BudgetPage() {
+  const { translate } = useLanguage();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -52,8 +55,9 @@ export default function BudgetPage() {
           fetch("/api/budget"),
         ]);
 
-        if (!invoicesRes.ok) throw new Error("Failed to fetch invoices");
-        if (!budgetsRes.ok) throw new Error("Failed to fetch budgets");
+        if (!invoicesRes.ok)
+          throw new Error(translate("errorFetchingInvoices"));
+        if (!budgetsRes.ok) throw new Error(translate("errorFetchingBudgets"));
 
         const invoicesData = await invoicesRes.json();
         const budgetsData = await budgetsRes.json();
@@ -65,13 +69,14 @@ export default function BudgetPage() {
         setCategories((prev) => [...new Set([...prev, ...fetchedCategories])]);
       } catch (error) {
         console.error("Error fetching data:", error);
+        toast.error(translate("errorFetchingData"));
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, []);
+  }, [translate]);
 
   useEffect(() => {
     const sums: Record<string, number> = {};
@@ -101,9 +106,9 @@ export default function BudgetPage() {
 
   const addCategory = async () => {
     setPostingCategoryTodb(true);
-    if (!name.trim()) return toast.error("Category name cannot be empty");
+    if (!name.trim()) return toast.error(translate("categoryNameEmpty"));
     if (categories.includes(name))
-      return toast.error("Category already exists");
+      return toast.error(translate("categoryExists"));
 
     try {
       const res = await fetch("/api/budget", {
@@ -116,18 +121,18 @@ export default function BudgetPage() {
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to add category");
+      if (!res.ok) throw new Error(translate("errorAddingCategory"));
 
       setCategories((prev) => [...prev, name]);
       setBudgets((prev) => [
         ...prev,
         { category: name, amount: budget, iconName: icon },
       ]);
-      toast.success("Category added successfully!");
+      toast.success(translate("categoryAdded"));
       setAddingCategory(false);
     } catch (error) {
       console.error("Error adding category:", error);
-      toast.error("Error adding category");
+      toast.error(translate("errorAddingCategory"));
     } finally {
       setSaving(false);
       setPostingCategoryTodb(false);
@@ -145,16 +150,16 @@ export default function BudgetPage() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to delete invoice");
+        throw new Error(translate("errorDeletingCategory"));
       }
-      toast.success("Category deleted successfully.");
+      toast.success(translate("categoryDeleted"));
       setCategories((prev) => prev.filter((cat) => cat !== category));
       setBudgets((prev) =>
         prev.filter((budget) => budget.category !== category)
       );
     } catch (error) {
       console.error("Error deleting category:", error);
-      toast.error("Error deleting category.");
+      toast.error(translate("errorDeletingCategory"));
     }
   };
 
@@ -194,17 +199,17 @@ export default function BudgetPage() {
             open={Boolean(addingCategory)}
             onClose={() => setAddingCategory(false)}
           >
-            <DialogTitle>Add Category</DialogTitle>
+            <DialogTitle>{translate("addCategory")}</DialogTitle>
             <DialogContent>
               <TextField
-                label="Category Name"
+                label={translate("categoryName")}
                 fullWidth
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 sx={{ marginBottom: 2, marginTop: 2 }}
               />
               <TextField
-                label="Budget"
+                label={translate("budget")}
                 fullWidth
                 type="text"
                 value={budget === 0 ? "" : budget}
@@ -228,14 +233,18 @@ export default function BudgetPage() {
                 onClick={() => setAddingCategory(false)}
                 color="secondary"
               >
-                Cancel
+                {translate("cancel")}
               </Button>
               <Button
                 onClick={addCategory}
                 color="primary"
                 disabled={postingCategoryTodb}
               >
-                {postingCategoryTodb ? <CircularProgress size={24} /> : "Add"}
+                {postingCategoryTodb ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  translate("addCategory")
+                )}
               </Button>
             </DialogActions>
           </Dialog>
@@ -246,7 +255,7 @@ export default function BudgetPage() {
             onClick={() => setAddingCategory(true)}
             disabled={addingCategory}
           >
-            Add Category
+            {translate("addCategory")}
           </Button>
         </>
       )}

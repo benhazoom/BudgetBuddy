@@ -45,9 +45,9 @@ export default function Layout(props: { children: React.ReactNode }) {
         toolbarAccount: CustomUserButton,
       }}
     >
-      <LanguageProvider>
-        <PageContainer>{props.children}</PageContainer>
-      </LanguageProvider>
+      {/* <LanguageProvider> */}
+      <PageContainer>{props.children}</PageContainer>
+      {/* </LanguageProvider> */}
     </DashboardLayout>
   );
 }
