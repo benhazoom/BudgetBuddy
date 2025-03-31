@@ -58,7 +58,7 @@ export default function InvoiceCard({
               {formatCurrency(amount)}
             </Typography>
           </Box>
-          <Box>
+          <Box sx={{ minWidth: "250px" }}>
             <IconButton onClick={() => onEdit()} aria-label="edit">
               <EditIcon />
             </IconButton>

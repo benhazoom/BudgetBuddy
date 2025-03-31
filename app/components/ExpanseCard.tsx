@@ -55,6 +55,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
           transform: "translateY(-4px)",
           boxShadow: 3,
         },
+        height: "200px",
       }}
     >
       <CardContent>
