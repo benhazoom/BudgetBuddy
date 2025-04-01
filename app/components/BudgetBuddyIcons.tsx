@@ -28,6 +28,9 @@ import {
 
 // Map category to icon
 export const getCategoryIcon = (category: string) => {
+  if (!category) {
+    return <Home color="#9C27B0" />;
+  }
   switch (category.toLowerCase()) {
     case "utensils-crossed":
       return <UtensilsCrossed color="#FF5252" />;
