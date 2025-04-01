@@ -25,7 +25,7 @@ export default function CreateInvoice() {
           data.map((budget: { category: string }) => budget.category)
         );
       } else {
-        toast.error("Failed to fetch categories");
+        toast.error(translate("errorFetchingCategories"));
       }
     };
 
@@ -36,7 +36,7 @@ export default function CreateInvoice() {
     event.preventDefault();
 
     if (!user) {
-      toast.error("You must be logged in to create an invoice");
+      toast.error(translate("mustBeLoggedInExpanse"));
       return;
     }
 
@@ -47,13 +47,13 @@ export default function CreateInvoice() {
     });
 
     if (response.ok) {
-      toast.success("Invoice created successfully");
+      toast.success(translate("invoiceCreated"));
       setName("");
       setCategory("");
       setAmount("");
     } else {
       const error = await response.json();
-      toast.error("Error: " + error.message);
+      toast.error(translate("errorCreatingInvoice"));
     }
   };
 

@@ -46,7 +46,7 @@ export default function SettingsPage() {
   const handleSave = () => {
     setCurrency(tempCurrency);
     setLanguage(tempLanguage);
-    toast.success("Settings saved successfully!");
+    toast.success(translate("settingsSaved"));
     router.push("/");
   };
 
