@@ -6,10 +6,8 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import AddIcon from "@mui/icons-material/Add";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { useLanguage } from "../contexts/LanguageContext";
 
-export function getNavigation(): Navigation {
-  const { translate } = useLanguage();
+export function getNavigation(translate: (key: string) => string): Navigation {
   return [
     {
       kind: "header",
