@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import InvoiceCard from "@/app/components/InvoiceCard";
-
+import { useLanguage } from "@/app/contexts/LanguageContext";
 interface Invoice {
   _id: string;
   name: string;
@@ -34,6 +34,7 @@ export default function InvoicesPage() {
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState(0);
   const [filterCategory, setFilterCategory] = useState("");
+  const { translate } = useLanguage();
 
   const categories = Array.from(
     new Set(invoices.map((invoice) => invoice.category))
@@ -58,10 +59,10 @@ export default function InvoicesPage() {
       setInvoices((prevInvoices) =>
         prevInvoices.filter((invoice) => invoice._id !== invoiceId)
       );
-      toast.success("Expanse deleted successfully.");
+      toast.success(translate("expanseDeleted"));
     } catch (error) {
       console.error("Error deleting expanse:", error);
-      toast.error("Error deleting expanse.");
+      toast.error(translate("errorDeletingExpanse"));
     }
   };
 
@@ -103,11 +104,11 @@ export default function InvoicesPage() {
             : invoice
         )
       );
-      toast.success("Expanse updated successfully.");
+      toast.success(translate("expanseUpdated"));
       setEditingInvoice(null); // Close the edit form
     } catch (error) {
       console.error("Error updating expanse:", error);
-      toast.error("Error updating expanse.");
+      toast.error(translate("errorUpdatingExpanse"));
     }
   };
 
@@ -135,14 +136,14 @@ export default function InvoicesPage() {
   return (
     <Box sx={{ padding: 3 }}>
       <FormControl fullWidth sx={{ marginBottom: 2 }}>
-        <InputLabel>Filter by Category</InputLabel>
+        <InputLabel>{translate("filterBudget")}</InputLabel>
         <Select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          label="Filter by Category"
+          label={translate("filterBudget")}
         >
           <MenuItem value="">
-            <em>All</em>
+            <em>{translate("all")}</em>
           </MenuItem>
           {categories.map((option) => (
             <MenuItem key={option} value={option}>
@@ -166,7 +167,7 @@ export default function InvoicesPage() {
           />
         ))
       ) : (
-        <Typography>No Expanses found.</Typography>
+        <Typography>{translate("noExpansesFound")}</Typography>
       )}
 
       {/* Edit Invoice Dialog */}
@@ -174,10 +175,10 @@ export default function InvoicesPage() {
         open={Boolean(editingInvoice)}
         onClose={() => setEditingInvoice(null)}
       >
-        <DialogTitle>Edit Expanse</DialogTitle>
+        <DialogTitle>{translate("editExpanse")}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Name"
+            label={translate("name")}
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -185,7 +186,7 @@ export default function InvoicesPage() {
           />
           <TextField
             select
-            label="Category"
+            label={translate("category")}
             fullWidth
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -198,7 +199,7 @@ export default function InvoicesPage() {
             ))}
           </TextField>
           <TextField
-            label="Amount"
+            label={translate("amount")}
             fullWidth
             type="number"
             value={amount === 0 ? "" : amount}
@@ -210,10 +211,10 @@ export default function InvoicesPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditingInvoice(null)} color="secondary">
-            Cancel
+            {translate("cancel")}
           </Button>
           <Button onClick={handleUpdate} color="primary">
-            Update
+            {translate("update")}
           </Button>
         </DialogActions>
       </Dialog>
