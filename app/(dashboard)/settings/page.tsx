@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useCurrency } from "../../contexts/CurrencyContext";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { LANGUAGES } from "../../lib/translations";
+import { LANGUAGES, getTranslation } from "../../lib/translations";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -46,7 +46,7 @@ export default function SettingsPage() {
   const handleSave = () => {
     setCurrency(tempCurrency);
     setLanguage(tempLanguage);
-    toast.success(translate("settingsSaved"));
+    toast.success(getTranslation("settingsSaved", tempLanguage));
     router.push("/");
   };
 
