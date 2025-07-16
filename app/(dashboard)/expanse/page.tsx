@@ -15,6 +15,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  useMediaQuery,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import InvoiceCard from "@/app/components/InvoiceCard";
@@ -39,6 +40,8 @@ export default function InvoicesPage() {
   const categories = Array.from(
     new Set(invoices.map((invoice) => invoice.category))
   );
+
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   // Function to delete invoice
   const handleDelete = async (invoiceId: string) => {
@@ -134,7 +137,7 @@ export default function InvoicesPage() {
     : invoices;
 
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: isMobile ? 0 : 3 }}>
       <FormControl fullWidth sx={{ marginBottom: 2 }}>
         <InputLabel>{translate("filterBudget")}</InputLabel>
         <Select

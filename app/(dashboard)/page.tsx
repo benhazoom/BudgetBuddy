@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Typography, CircularProgress, LinearProgress } from "@mui/material";
+import { Typography, CircularProgress, LinearProgress, useMediaQuery } from "@mui/material";
 import ExpanseCard from "../components/ExpanseCard";
 import Link from "next/link";
 import Card from "@mui/material/Card";
@@ -35,6 +35,8 @@ export default function HomePage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [categorySums, setCategorySums] = useState<Record<string, number>>({});
+  // Use MUI's useMediaQuery to detect mobile view (xs or sm)
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
     async function fetchData() {
@@ -170,27 +172,28 @@ export default function HomePage() {
               </Box>
 
               {/* Pie chart */}
-              <Box sx={{ height: 300, width: 500 }}>
-                <PieChart
-                  series={[
-                    {
-                      data: chartData.map((entry) => ({
-                        id: entry.name,
-                        value: entry.value,
-                        color: entry.color,
-                        label: entry.name,
-                      })),
-                      innerRadius: 60,
-                      outerRadius: 100,
-                      paddingAngle: 0,
-                      cornerRadius: 0,
-                      startAngle: 0,
-                      endAngle: 360,
-                    },
-                  ]}
-                  width={700}
-                />
-              </Box>
+              { !isMobile && (
+                <Box sx={{ width: { xs: "100%", md: "30%", lg: "60%" }, height: 300 }}>
+                  <PieChart
+                    series={[
+                      {
+                        data: chartData.map((entry) => ({
+                          id: entry.name,
+                          value: entry.value,
+                          color: entry.color,
+                          label: entry.name,
+                        })),
+                        innerRadius: 60,
+                        outerRadius: 100,
+                        paddingAngle: 0,
+                        cornerRadius: 0,
+                        startAngle: 0,
+                        endAngle: 360,
+                      },
+                    ]}
+                  />
+                </Box>
+              )}
             </Card>
           </Box>
 

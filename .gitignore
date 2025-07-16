@@ -147,3 +147,6 @@ dist-ssr
 /node_modules/
 /.next/
 node_modules
+
+# clerk configuration (can include secrets)
+/.clerk/

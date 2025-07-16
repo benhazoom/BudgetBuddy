@@ -4,7 +4,7 @@ import * as React from "react";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import { UserButton } from "@clerk/nextjs";
-import { Chip, Stack, Typography, Tooltip } from "@mui/material";
+import { Chip, Stack, Typography, Tooltip, useMediaQuery } from "@mui/material";
 import {
   CloudCircle as CloudCircleIcon,
   CheckCircle as CheckCircleIcon,
@@ -37,11 +37,22 @@ function CustomAppTitle() {
   );
 }
 
+function MobileCustomAppTitle() {
+  return (
+    <Typography variant="h6" style={{ fontWeight: "bold" }} marginTop={0.5} marginLeft={1}>
+      Budget Buddy
+    </Typography>
+  );
+}
+
 export default function Layout(props: { children: React.ReactNode }) {
+  // Use MUI's useMediaQuery to detect mobile view (xs or sm)
+  const isMobile = useMediaQuery('(max-width:600px)');
+
   return (
     <DashboardLayout
       slots={{
-        appTitle: CustomAppTitle,
+        appTitle: isMobile ? MobileCustomAppTitle : CustomAppTitle,
         toolbarAccount: CustomUserButton,
       }}
     >
